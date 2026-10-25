@@ -21,8 +21,11 @@
   --today: #ff3b30;
   --sel: #e8f0fe;
   --up: #e5322d;
+  --up-soft: #fdecea;
   --down: #2a6df4;
+  --down-soft: #e8effe;
   --flat: #8e8e93;
+  --flat-soft: #f0f0f2;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
   color-scheme: light;
 }
@@ -30,30 +33,35 @@
   :root {
     --bg: #1c1c1e; --side: #232325; --card: #2c2c2e; --fg: #f5f5f7; --muted: #98989d; --faint: #545458;
     --line: #38383a; --weekend: #202022; --other: #19191a; --today: #ff453a; --sel: #1f3350;
-    --up: #ff5b52; --down: #4d8dff; --flat: #98989d; color-scheme: dark;
+    --up: #ff5b52; --up-soft: #3a2220; --down: #4d8dff; --down-soft: #1d2a45; --flat: #98989d; --flat-soft: #333336;
+    color-scheme: dark;
   }
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 14px; -webkit-font-smoothing: antialiased; }
 .num { font-variant-numeric: tabular-nums; }
-.app { display: grid; grid-template-columns: minmax(0, 1fr) 340px; min-height: 100%; }
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 360px; min-height: 100%; }
 
 /* Month view */
 .month { display: flex; flex-direction: column; min-width: 0; }
-.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+.bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px;
   padding: 18px max(20px, env(safe-area-inset-right, 0px)) 14px max(20px, env(safe-area-inset-left, 0px)); }
+.titles { display: grid; gap: 4px; }
 h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
 h1 span { font-weight: 400; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: var(--card); }
 .seg button { font: inherit; font-size: 13px; color: var(--fg); background: transparent; border: 0; padding: 5px 12px; cursor: pointer; }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button:hover { background: var(--side); }
-button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
+button:focus-visible, summary:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
 .dows { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
 .dows div { text-align: right; padding: 0 10px 6px; font-size: 12px; color: var(--muted); }
 .dows .sun { color: var(--today); } .dows .sat { color: var(--down); }
-.grid { flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-rows: minmax(118px, 1fr); }
+.grid { flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-rows: minmax(132px, 1fr); }
 .cell { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 6px 6px 8px; min-width: 0;
   display: flex; flex-direction: column; gap: 3px; cursor: default; background: var(--bg); text-align: left; font: inherit; color: inherit; border-top: 0; border-left: 0; }
 .cell:nth-child(7n) { border-right: 0; }
@@ -64,15 +72,15 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
 .cell.sun .dnum { color: var(--today); } .cell.sat .dnum { color: var(--down); }
 .cell.other .dnum { color: var(--faint); }
 .cell.today .dnum { background: var(--today); color: #fff; font-weight: 600; }
+.tag { align-self: flex-start; max-width: 100%; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
+.tag.up { background: var(--up-soft); } .tag.down { background: var(--down-soft); } .tag.flat, .tag.closed { background: var(--flat-soft); color: var(--muted); }
 .ev { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 1.35; padding: 1px 5px; border-radius: 4px; white-space: nowrap; overflow: hidden; min-width: 0; }
 .ev .dot { flex: none; width: 7px; height: 7px; border-radius: 50%; }
 .ev .lbl { flex: none; }
 .ev .val { margin-left: auto; font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
-.cell.sel .ev:first-of-type { background: var(--sel); }
 .cell.sel .ev { background: var(--sel); }
-.ev.closed .dot { background: transparent; border: 1.5px solid var(--flat); }
-.ev.closed { color: var(--muted); font-style: italic; }
-.cell.other .ev { opacity: 0.55; }
+.cell.sel { box-shadow: inset 0 0 0 2px var(--down); }
+.cell.other .ev, .cell.other .tag { opacity: 0.55; }
 .up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--flat); }
 .bg-up { background: var(--up); } .bg-down { background: var(--down); } .bg-flat { background: var(--flat); }
 
@@ -82,8 +90,14 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
 .kicker { font-size: 13px; font-weight: 600; }
 .ctitle { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
 .cdate { font-size: 13px; color: var(--muted); }
-.rows { display: grid; gap: 0; }
-.row { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: baseline; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.plain { margin: 2px 0 0; font-size: 15.5px; line-height: 1.6; font-weight: 500; text-wrap: pretty; }
+.points { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.points li { display: grid; grid-template-columns: 18px 1fr; gap: 6px; font-size: 13.5px; line-height: 1.55; }
+.points .ic { font-size: 13px; line-height: 1.55; text-align: center; color: var(--muted); }
+.rows { display: grid; }
+.row { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 12px; align-items: baseline; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.row .n { display: grid; gap: 1px; }
+.row .s { font-size: 11.5px; color: var(--muted); }
 .row .c { color: var(--muted); }
 .row .p { font-weight: 600; min-width: 64px; text-align: right; }
 .note { font-size: 13px; line-height: 1.55; margin: 0; }
@@ -98,7 +112,15 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
 .summary div { display: grid; gap: 2px; }
 .summary .k { font-size: 12px; color: var(--muted); }
 .summary .v { font-size: 17px; font-weight: 600; }
-.foot { font-size: 12px; color: var(--muted); margin: 0 4px; line-height: 1.5; }
+details.help { background: var(--card); border-radius: 12px; box-shadow: 0 0 0 1px var(--line); }
+details.help summary { cursor: pointer; padding: 14px 16px; font-weight: 600; font-size: 14px; list-style: none; display: flex; justify-content: space-between; }
+details.help summary::-webkit-details-marker { display: none; }
+details.help summary::after { content: "＋"; color: var(--muted); font-weight: 400; }
+details.help[open] summary::after { content: "－"; }
+dl.terms { margin: 0; padding: 0 16px 14px; display: grid; gap: 10px; }
+dl.terms dt { font-weight: 600; font-size: 13.5px; }
+dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--muted); }
+.foot { font-size: 12px; color: var(--muted); margin: 0 4px; line-height: 1.6; }
 .empty { color: var(--muted); font-size: 14px; }
 
 @media (max-width: 1100px) {
@@ -111,7 +133,7 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
   .grid { grid-auto-rows: minmax(64px, auto); }
   .dows div { text-align: center; padding: 0 0 6px; }
   .dnum { align-self: center; font-size: 14px; width: 26px; height: 26px; }
-  .ev .lbl, .ev.extra { display: none; }
+  .ev .lbl, .ev.extra, .tag { display: none; }
   .ev { justify-content: center; padding: 1px 2px; font-size: 11px; }
   .ev .val { margin-left: 0; }
   .ev .dot { display: none; }
@@ -122,7 +144,15 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
 <div class="app">
   <main class="month">
     <div class="bar">
-      <h1 id="title"></h1>
+      <div class="titles">
+        <h1 id="title"></h1>
+        <div class="legend" aria-label="범례">
+          <span><i class="bg-up"></i>오른 날</span>
+          <span><i class="bg-down"></i>내린 날</span>
+          <span><i class="bg-flat"></i>거의 그대로</span>
+          <span>날짜를 누르면 쉬운 해석이 나와요</span>
+        </div>
+      </div>
       <div class="seg" role="group" aria-label="달 이동">
         <button id="prev" type="button" aria-label="이전 달">‹</button>
         <button id="today" type="button">오늘</button>
@@ -142,8 +172,9 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
   const DOW = ["일", "월", "화", "수", "목", "금", "토"];
   const IDX = [["spx", "S&P 500"], ["ndx", "나스닥"], ["dji", "다우"]];
   const SHORT = { spx: "S&P", ndx: "나스닥", dji: "다우" };
-  const VERDICT = { up: "상승", down: "하락", flat: "보합", closed: "휴장" };
+  const ABOUT = { spx: "미국 대표 기업 500곳", ndx: "애플·엔비디아 같은 기술·성장주 중심", dji: "코카콜라·JP모건 같은 전통 대형주 30곳" };
   const keys = Object.keys(DAYS).sort();
+  const tradeKeys = keys.filter((k) => DAYS[k].indices);
   const latest = keys[keys.length - 1];
 
   const now = new Date();
@@ -155,13 +186,112 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
 
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const pct = (v) => (typeof v === "number" ? (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%" : "–");
-  const dir = (v) => (v > 0 ? "up" : v < 0 ? "down" : "flat");
+  const dir = (v) => (v >= 0.1 ? "up" : v <= -0.1 ? "down" : "flat");
   const fmt = (v) => v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const label = (k) => { const [y, m, d] = k.split("-").map(Number); return `${m}월 ${d}일 (${DOW[new Date(y, m - 1, d).getDay()]})`; };
 
+  /* ---------- plain-language helpers ---------- */
+  // How big a one-day index move is, in everyday words.
+  function size(v) {
+    const a = Math.abs(v);
+    if (a < 0.1) return "거의 그대로";
+    if (a < 0.5) return "조금";
+    if (a < 1) return "꽤";
+    if (a < 2) return "크게";
+    return "아주 크게";
+  }
+  function moveWord(v) {
+    const s = size(v);
+    if (s === "거의 그대로") return "거의 변화 없었어요";
+    return `${s} ${v > 0 ? "올랐어요" : "내렸어요"}`;
+  }
+  function tagWord(v) {
+    const a = Math.abs(v);
+    if (a < 0.1) return "보합";
+    if (a >= 2) return v > 0 ? "급등" : "급락";
+    return `${size(v)} ${v > 0 ? "오름" : "내림"}`;
+  }
+  function streak(k) {
+    const i = tradeKeys.indexOf(k);
+    const d = dir(DAYS[k].indices.spx.chg);
+    if (d === "flat") return 0;
+    let n = 1;
+    for (let j = i - 1; j >= 0 && dir(DAYS[tradeKeys[j]].indices.spx.chg) === d; j--) n++;
+    return n;
+  }
+  function avgMove(k, n = 20) {
+    const i = tradeKeys.indexOf(k);
+    const prev = tradeKeys.slice(Math.max(0, i - n), i);
+    if (prev.length < 5) return null;
+    return prev.reduce((s, x) => s + Math.abs(DAYS[x].indices.spx.chg), 0) / prev.length;
+  }
+  function koreaTime(k) {
+    const [y, m, d] = k.split("-").map(Number);
+    const close = new Date(Date.UTC(y, m - 1, d, 20)); // 16:00 EDT; refined below for EST
+    const nyHour = +new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hourCycle: "h23" }).format(close);
+    close.setUTCHours(close.getUTCHours() + (16 - nyHour));
+    const kst = new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", month: "numeric", day: "numeric", weekday: "short", hour: "numeric", hour12: false }).formatToParts(close);
+    const p = Object.fromEntries(kst.map((x) => [x.type, x.value]));
+    return `한국 시간 ${p.month}월 ${p.day}일(${p.weekday}) 새벽 ${p.hour}시`;
+  }
+
+  function explainDay(k) {
+    const r = DAYS[k], ix = r.indices;
+    const spx = ix.spx.chg, ndx = ix.ndx.chg, dji = ix.dji.chg;
+    const headline = dir(spx) === "flat"
+      ? `미국 대표 기업 500곳의 주가를 묶은 S&P 500이 하루 동안 거의 변화가 없었어요(${pct(spx)}).`
+      : `미국 대표 기업 500곳의 주가를 묶은 S&P 500이 하루 동안 ${Math.abs(spx).toFixed(2)}% ${spx > 0 ? "올랐어요" : "내렸어요"}. '${size(spx)}' ${spx > 0 ? "오른" : "내린"} 날이에요.`;
+    const points = [];
+
+    const avg = avgMove(k);
+    if (avg != null) {
+      const ratio = Math.abs(spx) / avg;
+      const feel = ratio < 0.6 ? "평소보다 잔잔한 하루였어요" : ratio > 1.6 ? "평소보다 크게 출렁인 하루였어요" : "평소와 비슷한 크기의 움직임이에요";
+      points.push(["≈", `최근 20거래일 동안 S&P 500은 하루 평균 ±${avg.toFixed(2)}% 정도 움직였어요. 그에 비하면 ${feel}.`]);
+    }
+
+    const s = streak(k);
+    if (s >= 2) points.push([dir(spx) === "up" ? "↑" : "↓", `${s}거래일 연속 ${dir(spx) === "up" ? "올랐어요" : "내렸어요"}.`]);
+
+    const dn = dir(ndx), dd = dir(dji);
+    if (dn !== "flat" && dd !== "flat" && dn !== dd) {
+      points.push(["⇅", `기술주 중심인 나스닥은 ${dn === "up" ? "오르고" : "내리고"}, 전통 대형주 중심인 다우는 ${dd === "up" ? "올라서" : "내려서"} 업종별로 분위기가 엇갈렸어요.`]);
+    } else if (Math.abs(ndx - dji) >= 0.7) {
+      const techStronger = ndx > dji;
+      const bothDown = ndx < 0 && dji < 0;
+      const [hi, lo] = techStronger ? [`나스닥(${pct(ndx)})`, `다우(${pct(dji)})`] : [`다우(${pct(dji)})`, `나스닥(${pct(ndx)})`];
+      const hiSubj = hi + (techStronger ? "은" : "는");
+      points.push(["⇅", bothDown
+        ? `${hiSubj} ${lo}보다 덜 내렸어요. ${techStronger ? "전통 대형주 쪽" : "기술·성장주 쪽"} 하락이 더 컸던 날이에요.`
+        : `${hiSubj} ${lo}보다 더 힘이 좋았어요. ${techStronger ? "기술·성장주가" : "전통 대형주가"} 상대적으로 강했던 날이에요.`]);
+    } else {
+      points.push(["＝", `나스닥(${pct(ndx)})과 다우(${pct(dji)})가 비슷한 방향으로 움직였어요. 업종 가리지 않고 시장 전체 분위기가 같았던 날이에요.`]);
+    }
+
+    const djiPts = Math.round(ix.dji.close - ix.dji.prev);
+    if (Math.abs(djiPts) >= 100) {
+      points.push(["ⓘ", `뉴스에서 "다우 ${Math.abs(djiPts).toLocaleString()}포인트 ${djiPts > 0 ? "상승" : "하락"}"이라고 하면 이날 얘기예요. 포인트는 지수 숫자가 변한 크기이고, 비율로 보면 ${pct(dji)}예요.`]);
+    }
+
+    points.push(["◷", `이 결과는 뉴욕 시간 오후 4시 장 마감 기준이에요. ${koreaTime(k)}에 확정됐어요.`]);
+    return { headline, points };
+  }
+
+  function explainMonth(st, y, m) {
+    const ongoing = y === now.getFullYear() && m === now.getMonth();
+    const r = st.ret.spx;
+    const tone = Math.abs(r) < 1 ? (ongoing ? "거의 제자리인" : "거의 제자리였던") : Math.abs(r) < 3 ? (r > 0 ? "조금 오른" : "조금 내린") : r > 0 ? "많이 오른" : "많이 내린";
+    const order = IDX.map(([k, n]) => [n, st.ret[k]]).sort((a, b) => b[1] - a[1]);
+    const best = order[0], worst = order[order.length - 1];
+    let text = `${m + 1}월은 ${ongoing ? "지금까지 " : ""}S&P 500 기준 ${tone} 한 달${ongoing ? "이에요" : "이었어요"} (${pct(r)}).`;
+    const subj = (name) => name + (name === "다우" ? "가" : "이"); // S&P 500(오백)·나스닥 end in a final consonant
+    if (best[1] - worst[1] >= 2) text += ` 세 지수 중 ${subj(best[0])} 가장 강했고(${pct(best[1])}), ${subj(worst[0])} 가장 약했어요(${pct(worst[1])}).`;
+    return text;
+  }
+
   function monthStats(y, m) {
     const prefix = `${y}-${pad(m + 1)}`;
-    const ks = keys.filter((k) => k.startsWith(prefix) && DAYS[k].indices);
+    const ks = tradeKeys.filter((k) => k.startsWith(prefix));
     if (!ks.length) return null;
     const first = DAYS[ks[0]].indices, last = DAYS[ks[ks.length - 1]].indices;
     const ret = {};
@@ -169,6 +299,7 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
     return { ret, up: ks.filter((k) => DAYS[k].verdict === "up").length, down: ks.filter((k) => DAYS[k].verdict === "down").length, n: ks.length };
   }
 
+  /* ---------- rendering ---------- */
   function renderGrid() {
     document.getElementById("title").replaceChildren(document.createTextNode(`${view.m + 1}월 `), el("span", null, String(view.y)));
     const dows = document.getElementById("dows");
@@ -195,18 +326,18 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
         cell.classList.add("has");
         if (k === selected) cell.classList.add("sel");
         if (rec.verdict === "closed") {
-          const ev = el("div", "ev closed");
-          ev.append(el("span", "dot"), el("span", "lbl", rec.holiday ? `휴장 · ${rec.holiday}` : "휴장"));
-          cell.append(ev);
+          cell.append(el("span", "tag closed", rec.holiday ? `휴장 · ${rec.holiday}` : "휴장"));
           cell.setAttribute("aria-label", `${label(k)} 휴장`);
         } else {
+          const spx = rec.indices.spx.chg;
+          cell.append(el("span", "tag " + dir(spx), tagWord(spx)));
           IDX.forEach(([key], j) => {
             const c = rec.indices[key].chg;
             const ev = el("div", "ev" + (j ? " extra" : ""));
             ev.append(el("span", "dot bg-" + dir(c)), el("span", "lbl", SHORT[key]), el("span", "val num " + dir(c), pct(c)));
             cell.append(ev);
           });
-          cell.setAttribute("aria-label", `${label(k)} S&P 500 ${pct(rec.indices.spx.chg)}`);
+          cell.setAttribute("aria-label", `${label(k)} ${tagWord(spx)}, S&P 500 ${pct(spx)}`);
         }
         cell.addEventListener("click", () => { selected = k; render(); });
       }
@@ -224,16 +355,23 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
       card.append(el("p", "empty", "아직 기록이 없습니다. 매일 아침 7시(한국 시간)에 전날 미국 장 마감 결과가 추가됩니다."));
     } else if (rec.verdict === "closed") {
       card.append(el("div", "kicker flat", "휴장"), el("div", "ctitle", rec.holiday || "미국 증시 휴장일"), el("div", "cdate", `${label(selected)} · 뉴욕 기준`));
+      card.append(el("p", "plain", "미국 공휴일이라 증시가 열리지 않았어요. 이날은 주가가 움직이지 않아요."));
     } else {
       const spx = rec.indices.spx.chg;
-      card.append(el("div", "kicker " + dir(spx), VERDICT[rec.verdict] || ""));
+      const ex = explainDay(selected);
+      card.append(el("div", "kicker " + dir(spx), tagWord(spx)));
       const t = el("div", "ctitle num"); t.append("S&P 500 ", el("span", dir(spx), pct(spx))); card.append(t);
       card.append(el("div", "cdate", `${label(selected)} · 뉴욕 기준`));
+      card.append(el("p", "plain", ex.headline));
+      const ul = el("ul", "points");
+      ex.points.forEach(([ic, text]) => { const li = el("li"); li.append(el("span", "ic", ic), el("span", null, text)); ul.append(li); });
+      card.append(ul);
       const rows = el("div", "rows");
       IDX.forEach(([key, name]) => {
         const it = rec.indices[key];
         const r = el("div", "row num");
-        r.append(el("span", null, name), el("span", "c", fmt(it.close)), el("span", "p " + dir(it.chg), pct(it.chg)));
+        const n = el("span", "n"); n.append(el("span", null, name), el("span", "s", ABOUT[key]));
+        r.append(n, el("span", "c", fmt(it.close)), el("span", "p " + dir(it.chg), pct(it.chg)));
         rows.append(r);
       });
       card.append(rows);
@@ -247,7 +385,7 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
       const box = el("section", "card");
       const sum = el("div", "summary");
       IDX.forEach(([key, name]) => { const d = el("div"); d.append(el("span", "k", name), el("span", "v num " + dir(st.ret[key]), pct(st.ret[key]))); sum.append(d); });
-      box.append(sum, el("div", "cdate", `거래일 ${st.n}일 · 상승 ${st.up}일 · 하락 ${st.down}일 (S&P 500 기준)`));
+      box.append(sum, el("p", "note", explainMonth(st, view.y, view.m)), el("div", "cdate", `거래일 ${st.n}일 중 오른 날 ${st.up}일, 내린 날 ${st.down}일 (S&P 500 기준)`));
       side.append(box);
     }
 
@@ -265,7 +403,7 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
         body.append(el("div", "d", label(k)));
         const t = el("div", "t num");
         if (closed) t.append(`휴장${r.holiday ? " · " + r.holiday : ""}`);
-        else t.append("S&P 500 ", el("span", dir(c), pct(c)), ` · 나스닥 `, el("span", dir(r.indices.ndx.chg), pct(r.indices.ndx.chg)));
+        else t.append(el("span", dir(c), tagWord(c)), ` · S&P 500 ${pct(c)}`);
         body.append(t);
         b.append(el("span", "stripe bg-" + (closed ? "flat" : dir(c))), body);
         b.addEventListener("click", () => { selected = k; view = { y: +k.slice(0, 4), m: +k.slice(5, 7) - 1 }; render(); });
@@ -274,8 +412,26 @@ button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
       side.append(list);
     }
 
+    const help = el("details", "help");
+    help.append(el("summary", null, "처음이라면: 용어 풀이"));
+    const dl = el("dl", "terms");
+    [
+      ["지수", "여러 회사 주가를 하나로 묶은 점수예요. 지수가 올랐다는 건 묶인 회사들 주가가 평균적으로 올랐다는 뜻이에요."],
+      ["S&P 500", "미국 대표 기업 500곳을 묶은 지수예요. '미국 증시가 올랐다/내렸다'고 할 때 보통 이걸 기준으로 봐요."],
+      ["나스닥", "애플, 엔비디아, 마이크로소프트처럼 기술·성장 기업이 많은 지수예요. 다른 지수보다 크게 출렁이는 편이에요."],
+      ["다우", "미국 전통 대형주 30곳으로 만든 가장 오래된 지수예요. 뉴스에서 '포인트'로 자주 말해요."],
+      ["종가", "그날 장이 끝날 때(뉴욕 오후 4시)의 최종 가격이에요. 이 캘린더의 숫자는 모두 종가 기준이에요."],
+      ["등락률", "전날 종가와 비교해 몇 % 올랐는지(+) 내렸는지(−)예요. +1%면 100만 원어치가 하루 새 101만 원이 된 셈이에요."],
+      ["보합", "거의 변화가 없는 상태예요. 이 캘린더에서는 S&P 500 등락이 ±0.1% 안쪽일 때 보합으로 봐요."],
+      ["급등·급락", "하루에 2% 넘게 움직인 날이에요. 1년에 몇 번 없는, 시장이 크게 놀란 날이에요."],
+      ["휴장", "미국 공휴일이라 증시가 열리지 않은 날이에요. 토·일요일도 열리지 않아요."],
+      ["빨강·파랑", "한국 증시 앱처럼 오르면 빨강, 내리면 파랑이에요. 미국 앱은 반대로 오르면 초록, 내리면 빨강을 써요."],
+    ].forEach(([t, d]) => { dl.append(el("dt", null, t), el("dd", null, d)); });
+    help.append(dl);
+    side.append(help);
+
     const upd = rec?.updatedAt ? new Date(rec.updatedAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", dateStyle: "medium", timeStyle: "short" }) : null;
-    side.append(el("p", "foot", `데이터: Yahoo Finance 종가 · 평일 아침 7시(KST) 자동 갱신${upd ? ` · 마지막 갱신 ${upd}` : ""}`));
+    side.append(el("p", "foot", `데이터: Yahoo Finance 종가 · 평일 아침 7시(KST) 자동 갱신${upd ? ` · 마지막 갱신 ${upd}` : ""}. 해석은 숫자를 바탕으로 자동 생성된 설명이며 투자 조언이 아닙니다.`));
   }
 
   function render() { renderGrid(); renderSide(); }
