@@ -701,6 +701,32 @@
     "chg": -1.23
    }
   },
-  "updatedAt": "2026-10-25T10:30:20Z"
+  "updatedAt": "2026-10-25T10:30:20Z",
+  "summary": "국제 유가가 배럴당 100달러를 넘어서면서 '물가가 다시 오르면 금리도 쉽게 못 내린다'는 걱정이 커졌어요. 여기에 아메리칸 익스프레스가 대규모 감원을 발표하며 주가가 3% 넘게 빠져, 금융·전통 대형주가 많은 다우가 가장 크게 내렸어요.",
+  "bullish": [
+   {
+    "title": "다우는 이번 주 전체로는 +0.4%",
+    "note": "하루는 내렸지만 일주일 단위로 보면 전통 대형주는 오히려 올랐어요."
+   },
+   {
+    "title": "나스닥은 −0.21%로 선방",
+    "note": "전날 크게 팔렸던 기술주에 대한 매도가 다른 업종으로 옮겨가면서 기술주는 덜 내렸어요."
+   }
+  ],
+  "bearish": [
+   {
+    "title": "미국 유가(WTI) 배럴당 100달러 돌파",
+    "note": "미국-이란 갈등이 다시 커질 수 있다는 우려 때문이에요. 기름값이 오르면 기업 비용과 물가가 올라 주식에는 보통 부담이에요."
+   },
+   {
+    "title": "아메리칸 익스프레스 3% 넘게 하락",
+    "note": "전 세계 직원의 약 5%를 줄인다고 발표했어요. 감원은 '회사가 앞으로 장사가 어렵다고 본다'는 신호로 읽혀 주가가 빠지곤 해요."
+   }
+  ],
+  "sources": [
+   "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-23-dow-sp-500-nasdaq-tesla-meta-093000521.html",
+   "https://bbntimes.com/global-economy/dow-jones-today-djia-falls-to-52-215-16-as-american-express-slides-and-oil-prices-jump"
+  ],
+  "newsAt": "2026-10-26T00:00:00Z"
  }
 }

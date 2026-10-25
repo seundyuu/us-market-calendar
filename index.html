@@ -101,6 +101,16 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--down); ou
 .row .c { color: var(--muted); }
 .row .p { font-weight: 600; min-width: 64px; text-align: right; }
 .note { font-size: 13px; line-height: 1.55; margin: 0; }
+.news { display: grid; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
+.nhead { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+.nhead i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.news .points .ic { font-weight: 700; }
+.news .points .ic.up { color: var(--up); } .news .points .ic.down { color: var(--down); }
+.news b { font-weight: 600; display: block; }
+.nnote { display: block; color: var(--muted); }
+.src { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.src a { color: inherit; }
+.ndot { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); display: inline-block; margin-left: 4px; vertical-align: 2px; }
 .sect { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0 4px -12px; }
 .list { display: grid; gap: 2px; }
 .item { display: grid; grid-template-columns: 4px 1fr; gap: 10px; padding: 8px 8px; border-radius: 8px; cursor: pointer; background: transparent; border: 0; font: inherit; color: inherit; text-align: left; }
@@ -165,9 +175,8 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
   <aside class="side" id="side" aria-live="polite"></aside>
 </div>
 
-<script src="data.js"></script>
 <script>
-(() => {
+function startCalendar() {
   const DAYS = window.MARKET_DAYS || {};
   const DOW = ["일", "월", "화", "수", "목", "금", "토"];
   const IDX = [["spx", "S&P 500"], ["ndx", "나스닥"], ["dji", "다우"]];
@@ -330,7 +339,9 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
           cell.setAttribute("aria-label", `${label(k)} 휴장`);
         } else {
           const spx = rec.indices.spx.chg;
-          cell.append(el("span", "tag " + dir(spx), tagWord(spx)));
+          const tag = el("span", "tag " + dir(spx), tagWord(spx));
+          if (rec.summary) { tag.append(el("i", "ndot")); tag.title = "뉴스 해석 있음"; }
+          cell.append(tag);
           IDX.forEach(([key], j) => {
             const c = rec.indices[key].chg;
             const ev = el("div", "ev" + (j ? " extra" : ""));
@@ -375,9 +386,41 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
         rows.append(r);
       });
       card.append(rows);
-      if (rec.summary) card.append(el("p", "note", rec.summary));
     }
     side.append(card);
+
+    if (rec && (rec.summary || rec.bullish?.length || rec.bearish?.length)) {
+      side.append(el("h2", "sect", "왜 이렇게 움직였을까?"));
+      const why = el("section", "card");
+      if (rec.summary) why.append(el("p", "plain", rec.summary));
+      const list = (title, cls, items) => {
+        if (!Array.isArray(items) || !items.length) return;
+        const box = el("div", "news");
+        const h = el("div", "nhead " + cls); h.append(el("i", "bg-" + cls), title); box.append(h);
+        const ul = el("ul", "points");
+        items.forEach((it) => {
+          const li = el("li"); const body = el("span");
+          body.append(el("b", null, it.title || ""));
+          if (it.note) body.append(el("span", "nnote", it.note));
+          li.append(el("span", "ic " + cls, cls === "up" ? "+" : "−"), body); ul.append(li);
+        });
+        box.append(ul); why.append(box);
+      };
+      list("좋은 소식 (호재)", "up", rec.bullish);
+      list("나쁜 소식 (악재)", "down", rec.bearish);
+      const links = (rec.sources || []).filter((u) => /^https:\/\//.test(u));
+      if (links.length) {
+        const src = el("div", "src", "출처 ");
+        links.forEach((u, i) => {
+          const a = el("a", null, new URL(u).hostname.replace(/^www\./, "")); a.href = u; a.target = "_blank"; a.rel = "noopener";
+          if (i) src.append(" · "); src.append(a);
+        });
+        why.append(src);
+      }
+      side.append(why);
+    } else if (rec && rec.verdict !== "closed") {
+      side.append(el("p", "foot", "이날의 뉴스 해석은 아직 없어요. 매일 아침 7시 30분쯤 Claude가 뉴스를 찾아 추가해요(Mac이 켜져 있을 때)."));
+    }
 
     const st = monthStats(view.y, view.m);
     if (st) {
@@ -431,7 +474,7 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
     side.append(help);
 
     const upd = rec?.updatedAt ? new Date(rec.updatedAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", dateStyle: "medium", timeStyle: "short" }) : null;
-    side.append(el("p", "foot", `데이터: Yahoo Finance 종가 · 평일 아침 7시(KST) 자동 갱신${upd ? ` · 마지막 갱신 ${upd}` : ""}. 해석은 숫자를 바탕으로 자동 생성된 설명이며 투자 조언이 아닙니다.`));
+    side.append(el("p", "foot", `데이터: Yahoo Finance 종가 · 평일 아침 7시(KST) 자동 갱신${upd ? ` · 마지막 갱신 ${upd}` : ""}. 뉴스 해석은 Claude가 기사를 찾아 요약한 것이고, 나머지 해석은 숫자로 자동 생성돼요. 투자 조언이 아닙니다.`));
   }
 
   function render() { renderGrid(); renderSide(); }
@@ -441,7 +484,12 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
   document.getElementById("today").addEventListener("click", () => { view = { y: now.getFullYear(), m: now.getMonth() }; render(); });
   document.addEventListener("keydown", (e) => { if (e.key === "ArrowLeft") move(-1); if (e.key === "ArrowRight") move(1); });
   render();
-})();
+}
+// data.js changes every morning; skip the browser cache so the newest closes always show.
+const dataScript = document.createElement("script");
+dataScript.src = "data.js?v=" + Date.now();
+dataScript.onload = dataScript.onerror = startCalendar;
+document.head.append(dataScript);
 </script>
 </body>
 </html>

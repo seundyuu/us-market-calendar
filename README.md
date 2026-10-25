@@ -20,10 +20,19 @@ API 키나 유료 서비스 없이 무료로 돌아갑니다.
 - NYSE 휴장일은 **휴장**으로 표시 (`update.py`의 `HOLIDAYS`에 2026–2027년 등록)
 - 매번 최근 45일을 다시 확인하므로, 실행이 빠진 날이 있어도 다음 실행 때 자동으로 채워집니다.
 
-## 메모 추가
+## 뉴스 해석 (왜 움직였나)
 
-`data/days.json`에서 날짜에 `"summary": "..."`를 넣으면 오른쪽 상세 카드에 표시됩니다. 자동 갱신은 이 메모를 지우지 않습니다.
-수정 후 `python3 scripts/update.py`를 실행하면 `data.js`도 함께 갱신됩니다.
+매일 아침 7시 30분(KST)쯤 Mac의 Claude 앱 예약 작업이 뉴스를 검색해 아래 필드를 `data/days.json`에 추가하고 커밋합니다.
+Mac과 Claude 앱이 켜져 있을 때만 실행되며, 지수 숫자 기록(GitHub Actions)과는 별개입니다.
+
+| 필드 | 내용 |
+| --- | --- |
+| `summary` | 그날 왜 움직였는지 주린이도 이해할 수 있는 2~3문장 |
+| `bullish` / `bearish` | 호재·악재 목록 `[{"title", "note"}]` |
+| `sources` | 참고한 기사 URL |
+| `newsAt` | 뉴스 해석 작성 시각 |
+
+자동 갱신(`update.py`)은 이 필드를 지우지 않습니다. 직접 고친 뒤 `python3 scripts/update.py`를 실행하면 `data.js`도 함께 갱신됩니다.
 
 ## 직접 실행
 
