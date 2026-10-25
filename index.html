@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>미국 증시 캘린더</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Apple Calendar month view: hairline grid, dates top-right, red circle for today, inspector sidebar on the right.
+   Korean market colors: red = up, blue = down. */
+:root {
+  --bg: #ffffff;
+  --side: #f5f5f7;
+  --card: #ffffff;
+  --fg: #1d1d1f;
+  --muted: #86868b;
+  --faint: #c7c7cc;
+  --line: #e5e5ea;
+  --weekend: #fafafa;
+  --other: #f5f5f7;
+  --today: #ff3b30;
+  --sel: #e8f0fe;
+  --up: #e5322d;
+  --down: #2a6df4;
+  --flat: #8e8e93;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1e; --side: #232325; --card: #2c2c2e; --fg: #f5f5f7; --muted: #98989d; --faint: #545458;
+    --line: #38383a; --weekend: #202022; --other: #19191a; --today: #ff453a; --sel: #1f3350;
+    --up: #ff5b52; --down: #4d8dff; --flat: #98989d; color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 14px; -webkit-font-smoothing: antialiased; }
+.num { font-variant-numeric: tabular-nums; }
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 340px; min-height: 100%; }
+
+/* Month view */
+.month { display: flex; flex-direction: column; min-width: 0; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 18px max(20px, env(safe-area-inset-right, 0px)) 14px max(20px, env(safe-area-inset-left, 0px)); }
+h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+h1 span { font-weight: 400; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: var(--card); }
+.seg button { font: inherit; font-size: 13px; color: var(--fg); background: transparent; border: 0; padding: 5px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button:hover { background: var(--side); }
+button:focus-visible { outline: 2px solid var(--down); outline-offset: -2px; }
+.dows { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+.dows div { text-align: right; padding: 0 10px 6px; font-size: 12px; color: var(--muted); }
+.dows .sun { color: var(--today); } .dows .sat { color: var(--down); }
+.grid { flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-rows: minmax(118px, 1fr); }
+.cell { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 6px 6px 8px; min-width: 0;
+  display: flex; flex-direction: column; gap: 3px; cursor: default; background: var(--bg); text-align: left; font: inherit; color: inherit; border-top: 0; border-left: 0; }
+.cell:nth-child(7n) { border-right: 0; }
+.cell.wkend { background: var(--weekend); }
+.cell.other { background: var(--other); }
+.cell.has { cursor: pointer; }
+.dnum { align-self: flex-end; font-size: 15px; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; }
+.cell.sun .dnum { color: var(--today); } .cell.sat .dnum { color: var(--down); }
+.cell.other .dnum { color: var(--faint); }
+.cell.today .dnum { background: var(--today); color: #fff; font-weight: 600; }
+.ev { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 1.35; padding: 1px 5px; border-radius: 4px; white-space: nowrap; overflow: hidden; min-width: 0; }
+.ev .dot { flex: none; width: 7px; height: 7px; border-radius: 50%; }
+.ev .lbl { flex: none; }
+.ev .val { margin-left: auto; font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
+.cell.sel .ev:first-of-type { background: var(--sel); }
+.cell.sel .ev { background: var(--sel); }
+.ev.closed .dot { background: transparent; border: 1.5px solid var(--flat); }
+.ev.closed { color: var(--muted); font-style: italic; }
+.cell.other .ev { opacity: 0.55; }
+.up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--flat); }
+.bg-up { background: var(--up); } .bg-down { background: var(--down); } .bg-flat { background: var(--flat); }
+
+/* Inspector */
+.side { background: var(--side); border-left: 1px solid var(--line); padding: 18px 16px 32px; display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.card { background: var(--card); border-radius: 12px; padding: 16px; display: grid; gap: 10px; box-shadow: 0 0 0 1px var(--line); }
+.kicker { font-size: 13px; font-weight: 600; }
+.ctitle { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+.cdate { font-size: 13px; color: var(--muted); }
+.rows { display: grid; gap: 0; }
+.row { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: baseline; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.row .c { color: var(--muted); }
+.row .p { font-weight: 600; min-width: 64px; text-align: right; }
+.note { font-size: 13px; line-height: 1.55; margin: 0; }
+.sect { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0 4px -12px; }
+.list { display: grid; gap: 2px; }
+.item { display: grid; grid-template-columns: 4px 1fr; gap: 10px; padding: 8px 8px; border-radius: 8px; cursor: pointer; background: transparent; border: 0; font: inherit; color: inherit; text-align: left; }
+.item:hover, .item.on { background: var(--card); }
+.item .stripe { border-radius: 2px; }
+.item .d { font-size: 12px; color: var(--muted); }
+.item .t { font-size: 14px; font-weight: 500; }
+.summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.summary div { display: grid; gap: 2px; }
+.summary .k { font-size: 12px; color: var(--muted); }
+.summary .v { font-size: 17px; font-weight: 600; }
+.foot { font-size: 12px; color: var(--muted); margin: 0 4px; line-height: 1.5; }
+.empty { color: var(--muted); font-size: 14px; }
+
+@media (max-width: 1100px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .side { border-left: 0; border-top: 1px solid var(--line); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+}
+@media (max-width: 600px) {
+  h1 { font-size: 24px; }
+  .bar { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .grid { grid-auto-rows: minmax(64px, auto); }
+  .dows div { text-align: center; padding: 0 0 6px; }
+  .dnum { align-self: center; font-size: 14px; width: 26px; height: 26px; }
+  .ev .lbl, .ev.extra { display: none; }
+  .ev { justify-content: center; padding: 1px 2px; font-size: 11px; }
+  .ev .val { margin-left: 0; }
+  .ev .dot { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <main class="month">
+    <div class="bar">
+      <h1 id="title"></h1>
+      <div class="seg" role="group" aria-label="달 이동">
+        <button id="prev" type="button" aria-label="이전 달">‹</button>
+        <button id="today" type="button">오늘</button>
+        <button id="next" type="button" aria-label="다음 달">›</button>
+      </div>
+    </div>
+    <div class="dows" id="dows"></div>
+    <div class="grid" id="grid"></div>
+  </main>
+  <aside class="side" id="side" aria-live="polite"></aside>
+</div>
+
+<script src="data.js"></script>
+<script>
+(() => {
+  const DAYS = window.MARKET_DAYS || {};
+  const DOW = ["일", "월", "화", "수", "목", "금", "토"];
+  const IDX = [["spx", "S&P 500"], ["ndx", "나스닥"], ["dji", "다우"]];
+  const SHORT = { spx: "S&P", ndx: "나스닥", dji: "다우" };
+  const VERDICT = { up: "상승", down: "하락", flat: "보합", closed: "휴장" };
+  const keys = Object.keys(DAYS).sort();
+  const latest = keys[keys.length - 1];
+
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const todayKey = iso(now);
+  let selected = latest || null;
+  let view = latest ? { y: +latest.slice(0, 4), m: +latest.slice(5, 7) - 1 } : { y: now.getFullYear(), m: now.getMonth() };
+
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const pct = (v) => (typeof v === "number" ? (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%" : "–");
+  const dir = (v) => (v > 0 ? "up" : v < 0 ? "down" : "flat");
+  const fmt = (v) => v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const label = (k) => { const [y, m, d] = k.split("-").map(Number); return `${m}월 ${d}일 (${DOW[new Date(y, m - 1, d).getDay()]})`; };
+
+  function monthStats(y, m) {
+    const prefix = `${y}-${pad(m + 1)}`;
+    const ks = keys.filter((k) => k.startsWith(prefix) && DAYS[k].indices);
+    if (!ks.length) return null;
+    const first = DAYS[ks[0]].indices, last = DAYS[ks[ks.length - 1]].indices;
+    const ret = {};
+    IDX.forEach(([k]) => { ret[k] = (last[k].close / first[k].prev - 1) * 100; });
+    return { ret, up: ks.filter((k) => DAYS[k].verdict === "up").length, down: ks.filter((k) => DAYS[k].verdict === "down").length, n: ks.length };
+  }
+
+  function renderGrid() {
+    document.getElementById("title").replaceChildren(document.createTextNode(`${view.m + 1}월 `), el("span", null, String(view.y)));
+    const dows = document.getElementById("dows");
+    dows.replaceChildren(...DOW.map((d, i) => el("div", i === 0 ? "sun" : i === 6 ? "sat" : "", d)));
+
+    const grid = document.getElementById("grid");
+    grid.replaceChildren();
+    const start = new Date(view.y, view.m, 1 - new Date(view.y, view.m, 1).getDay());
+    const lastDay = new Date(view.y, view.m + 1, 0);
+    const weeks = Math.ceil((lastDay.getDate() + new Date(view.y, view.m, 1).getDay()) / 7);
+    for (let i = 0; i < weeks * 7; i++) {
+      const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+      const k = iso(d);
+      const rec = DAYS[k];
+      const cell = el(rec ? "button" : "div", "cell");
+      const wd = d.getDay();
+      if (wd === 0) cell.classList.add("sun", "wkend");
+      if (wd === 6) cell.classList.add("sat", "wkend");
+      if (d.getMonth() !== view.m) cell.classList.add("other");
+      if (k === todayKey) cell.classList.add("today");
+      cell.append(el("span", "dnum num", d.getDate()));
+      if (rec) {
+        cell.type = "button";
+        cell.classList.add("has");
+        if (k === selected) cell.classList.add("sel");
+        if (rec.verdict === "closed") {
+          const ev = el("div", "ev closed");
+          ev.append(el("span", "dot"), el("span", "lbl", rec.holiday ? `휴장 · ${rec.holiday}` : "휴장"));
+          cell.append(ev);
+          cell.setAttribute("aria-label", `${label(k)} 휴장`);
+        } else {
+          IDX.forEach(([key], j) => {
+            const c = rec.indices[key].chg;
+            const ev = el("div", "ev" + (j ? " extra" : ""));
+            ev.append(el("span", "dot bg-" + dir(c)), el("span", "lbl", SHORT[key]), el("span", "val num " + dir(c), pct(c)));
+            cell.append(ev);
+          });
+          cell.setAttribute("aria-label", `${label(k)} S&P 500 ${pct(rec.indices.spx.chg)}`);
+        }
+        cell.addEventListener("click", () => { selected = k; render(); });
+      }
+      grid.append(cell);
+    }
+  }
+
+  function renderSide() {
+    const side = document.getElementById("side");
+    side.replaceChildren();
+    const rec = selected && DAYS[selected];
+
+    const card = el("section", "card");
+    if (!rec) {
+      card.append(el("p", "empty", "아직 기록이 없습니다. 매일 아침 7시(한국 시간)에 전날 미국 장 마감 결과가 추가됩니다."));
+    } else if (rec.verdict === "closed") {
+      card.append(el("div", "kicker flat", "휴장"), el("div", "ctitle", rec.holiday || "미국 증시 휴장일"), el("div", "cdate", `${label(selected)} · 뉴욕 기준`));
+    } else {
+      const spx = rec.indices.spx.chg;
+      card.append(el("div", "kicker " + dir(spx), VERDICT[rec.verdict] || ""));
+      const t = el("div", "ctitle num"); t.append("S&P 500 ", el("span", dir(spx), pct(spx))); card.append(t);
+      card.append(el("div", "cdate", `${label(selected)} · 뉴욕 기준`));
+      const rows = el("div", "rows");
+      IDX.forEach(([key, name]) => {
+        const it = rec.indices[key];
+        const r = el("div", "row num");
+        r.append(el("span", null, name), el("span", "c", fmt(it.close)), el("span", "p " + dir(it.chg), pct(it.chg)));
+        rows.append(r);
+      });
+      card.append(rows);
+      if (rec.summary) card.append(el("p", "note", rec.summary));
+    }
+    side.append(card);
+
+    const st = monthStats(view.y, view.m);
+    if (st) {
+      side.append(el("h2", "sect", `${view.m + 1}월 성과`));
+      const box = el("section", "card");
+      const sum = el("div", "summary");
+      IDX.forEach(([key, name]) => { const d = el("div"); d.append(el("span", "k", name), el("span", "v num " + dir(st.ret[key]), pct(st.ret[key]))); sum.append(d); });
+      box.append(sum, el("div", "cdate", `거래일 ${st.n}일 · 상승 ${st.up}일 · 하락 ${st.down}일 (S&P 500 기준)`));
+      side.append(box);
+    }
+
+    const recent = keys.slice(-10).reverse();
+    if (recent.length) {
+      side.append(el("h2", "sect", "최근 거래일"));
+      const list = el("div", "list");
+      recent.forEach((k) => {
+        const r = DAYS[k];
+        const b = el("button", "item" + (k === selected ? " on" : ""));
+        b.type = "button";
+        const closed = r.verdict === "closed";
+        const c = closed ? 0 : r.indices.spx.chg;
+        const body = el("div");
+        body.append(el("div", "d", label(k)));
+        const t = el("div", "t num");
+        if (closed) t.append(`휴장${r.holiday ? " · " + r.holiday : ""}`);
+        else t.append("S&P 500 ", el("span", dir(c), pct(c)), ` · 나스닥 `, el("span", dir(r.indices.ndx.chg), pct(r.indices.ndx.chg)));
+        body.append(t);
+        b.append(el("span", "stripe bg-" + (closed ? "flat" : dir(c))), body);
+        b.addEventListener("click", () => { selected = k; view = { y: +k.slice(0, 4), m: +k.slice(5, 7) - 1 }; render(); });
+        list.append(b);
+      });
+      side.append(list);
+    }
+
+    const upd = rec?.updatedAt ? new Date(rec.updatedAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", dateStyle: "medium", timeStyle: "short" }) : null;
+    side.append(el("p", "foot", `데이터: Yahoo Finance 종가 · 평일 아침 7시(KST) 자동 갱신${upd ? ` · 마지막 갱신 ${upd}` : ""}`));
+  }
+
+  function render() { renderGrid(); renderSide(); }
+  const move = (delta) => { const d = new Date(view.y, view.m + delta, 1); view = { y: d.getFullYear(), m: d.getMonth() }; render(); };
+  document.getElementById("prev").addEventListener("click", () => move(-1));
+  document.getElementById("next").addEventListener("click", () => move(1));
+  document.getElementById("today").addEventListener("click", () => { view = { y: now.getFullYear(), m: now.getMonth() }; render(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "ArrowLeft") move(-1); if (e.key === "ArrowRight") move(1); });
+  render();
+})();
+</script>
+</body>
+</html>
