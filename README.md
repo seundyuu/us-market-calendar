@@ -42,3 +42,14 @@ open index.html
 ```
 
 수동 실행은 저장소의 **Actions → Update market data → Run workflow**에서도 할 수 있습니다.
+
+## 매일 아침 메일
+
+`.github/workflows/email.yml`이 평일 아침 8시(KST)에 최신 거래일 요약을 Gmail로 보냅니다(`scripts/send_email.py`).
+저장소 **Settings → Secrets and variables → Actions**에 아래 값이 필요합니다.
+
+| 이름 | 값 |
+| --- | --- |
+| `GMAIL_USER` | 보내는 Gmail 주소 |
+| `GMAIL_APP_PASSWORD` | Google 계정의 앱 비밀번호(16자리) |
+| `MAIL_TO` | (선택) 받는 주소. 여러 개는 쉼표로 구분. 비우면 `GMAIL_USER`로 보냄 |
