@@ -69,11 +69,13 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--down); ou
 .cell.wkend { background: var(--weekend); }
 .cell.other { background: var(--other); }
 .cell.has { cursor: pointer; }
-.dnum { align-self: flex-end; font-size: 15px; font-weight: 600; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; }
+/* Status tag on the left, day number on the right, sharing one baseline row. */
+.chead { display: flex; align-items: center; gap: 4px; min-width: 0; margin-bottom: 2px; }
+.dnum { flex: none; margin-left: auto; font-size: 15px; font-weight: 600; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; }
 .cell.sun .dnum { color: var(--today); } .cell.sat .dnum { color: var(--down); }
 .cell.other .dnum { color: var(--faint); }
 .cell.today .dnum { background: var(--today); color: #fff; font-weight: 600; }
-.tag { align-self: flex-start; max-width: 100%; font-size: 12px; font-weight: 600; padding: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
+.tag { min-width: 0; font-size: 13px; line-height: 28px; font-weight: 600; padding: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tag.flat, .tag.closed { color: var(--muted); }
 .ev { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 1.35; padding: 1px 5px; border-radius: 4px; white-space: nowrap; overflow: hidden; min-width: 0; }
 .ev .dot { flex: none; width: 7px; height: 7px; border-radius: 50%; }
@@ -143,7 +145,7 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
   .bar { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .grid { grid-auto-rows: minmax(64px, auto); }
   .dows div { text-align: center; padding: 0 0 6px; }
-  .dnum { align-self: center; font-size: 14px; width: 26px; height: 26px; }
+  .dnum { margin-right: auto; font-size: 14px; width: 26px; height: 26px; }
   .ev .lbl, .ev.extra, .tag { display: none; }
   .ev { justify-content: center; padding: 1px 2px; font-size: 11px; }
   .ev .val { margin-left: 0; }
@@ -330,19 +332,22 @@ function startCalendar() {
       if (wd === 6) cell.classList.add("sat", "wkend");
       if (d.getMonth() !== view.m) cell.classList.add("other");
       if (k === todayKey) cell.classList.add("today");
-      cell.append(el("span", "dnum num", d.getDate()));
+      const head = el("div", "chead");
+      const dnum = el("span", "dnum num", d.getDate());
+      head.append(dnum);
+      cell.append(head);
       if (rec) {
         cell.type = "button";
         cell.classList.add("has");
         if (k === selected) cell.classList.add("sel");
         if (rec.verdict === "closed") {
-          cell.append(el("span", "tag closed", rec.holiday ? `휴장 · ${rec.holiday}` : "휴장"));
+          head.insertBefore(el("span", "tag closed", rec.holiday ? `휴장 · ${rec.holiday}` : "휴장"), dnum);
           cell.setAttribute("aria-label", `${label(k)} 휴장`);
         } else {
           const spx = rec.indices.spx.chg;
           const tag = el("span", "tag " + dir(spx), tagWord(spx));
           if (rec.summary) { tag.append(el("i", "ndot")); tag.title = "뉴스 해석 있음"; }
-          cell.append(tag);
+          head.insertBefore(tag, dnum);
           IDX.forEach(([key], j) => {
             const c = rec.indices[key].chg;
             const ev = el("div", "ev" + (j ? " extra" : ""));
