@@ -140,7 +140,46 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
   .app { grid-template-columns: minmax(0, 1fr); }
   .side { border-left: 0; border-top: 1px solid var(--line); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 }
+/* Market flow: sector report card, rising themes, long-run facts (below the month grid) */
+.flow { display: grid; gap: 28px; padding: 28px max(20px, env(safe-area-inset-right, 0px)) 40px max(20px, env(safe-area-inset-left, 0px)); }
+.flow h2 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+.flow .lead { margin: 4px 0 0; font-size: 13px; color: var(--muted); line-height: 1.55; }
+.fsec { display: grid; gap: 12px; min-width: 0; }
+.sectors { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.srow { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) repeat(3, 64px); gap: 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.srow.head { font-size: 12px; color: var(--muted); padding: 6px 0; }
+.srow.head span:nth-child(n+3) { text-align: right; }
+.srow .nm { display: grid; gap: 1px; min-width: 0; }
+.srow .nm b { font-weight: 600; }
+.srow .nm small { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.srow .v { text-align: right; font-weight: 500; }
+.sbar { position: relative; height: 8px; }
+.sbar::before { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--line); }
+.sbar i { position: absolute; top: 0; bottom: 0; border-radius: 2px; }
+.badge { display: inline-block; font-size: 11px; font-weight: 600; margin-left: 6px; }
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.theme { background: var(--card); border-radius: 12px; box-shadow: 0 0 0 1px var(--line); padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.theme h3 { margin: 0; font-size: 16px; font-weight: 700; }
+.theme .one { margin: 0; font-size: 13.5px; line-height: 1.55; }
+.theme .lbl2 { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
+.theme ul { margin: 0; padding-left: 16px; font-size: 13px; line-height: 1.55; display: grid; gap: 3px; }
+.cos { display: flex; flex-wrap: wrap; gap: 6px; }
+.co { font-size: 12px; background: var(--side); border-radius: 6px; padding: 3px 7px; }
+.co b { font-weight: 600; }
+.risk { font-size: 12.5px; line-height: 1.55; background: var(--down-soft); border-radius: 8px; padding: 8px 10px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.fact { background: var(--card); border-radius: 12px; box-shadow: 0 0 0 1px var(--line); padding: 14px 16px; display: grid; gap: 4px; }
+.fact .k { font-size: 12px; color: var(--muted); }
+.fact .v { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+.fact .d { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.disc { font-size: 12px; color: var(--muted); line-height: 1.6; margin: 0; }
 @media (max-width: 600px) {
+  .srow { grid-template-columns: minmax(0, 1fr) repeat(3, 56px); }
+  .srow .sbar, .srow.head span:nth-child(2) { display: none; }
+}
+
+@media (max-width: 600px) {
+  .flow { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   h1 { font-size: 24px; }
   .bar { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .grid { grid-auto-rows: minmax(64px, auto); }
@@ -174,6 +213,7 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
     </div>
     <div class="dows" id="dows"></div>
     <div class="grid" id="grid"></div>
+    <section class="flow" id="flow" aria-label="요즘 시장 흐름"></section>
   </main>
   <aside class="side" id="side" aria-live="polite"></aside>
 </div>
@@ -197,6 +237,52 @@ function startCalendar() {
   let view = latest ? { y: +latest.slice(0, 4), m: +latest.slice(5, 7) - 1 } : { y: now.getFullYear(), m: now.getMonth() };
 
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const STATS = window.MARKET_STATS?.indices || {};
+  const SECTORS = window.MARKET_SECTORS?.sectors || [];
+  const TRENDS = window.MARKET_TRENDS;
+  const yearOf = (k) => k ? k.slice(0, 4) : "";
+  const dateKo = (k) => { const [y, m, d] = k.split("-").map(Number); return `${y}년 ${m}월 ${d}일`; };
+
+  /* ---------- full-history statistics (descriptive only) ---------- */
+  // Share of all trading days whose absolute move was smaller than v.
+  function smallerShare(st, v) {
+    const q = st.absQuantiles, a = Math.abs(v);
+    let i = 0; while (i < 100 && q[i + 1] <= a) i++;
+    return i;
+  }
+  function historyPoints(k) {
+    const st = STATS.spx, r = DAYS[k];
+    if (!st || !r?.indices) return [];
+    const spx = r.indices.spx.chg, a = Math.abs(spx), since = yearOf(st.start);
+    const years = st.days / 252;
+    const pts = [];
+    const share = smallerShare(st, spx);
+    if (a < 0.5) {
+      pts.push(["▦", `하루 ±0.5% 안쪽 움직임은 ${since}년 이후 전체 거래일의 약 ${share}%예요. 가장 흔한, 평범한 날이에요.`]);
+    } else {
+      const t = [3, 2, 1, 0.5].find((x) => a >= x);
+      const m = st.moves[String(t)];
+      const per = spx > 0 ? m.upPerYear : m.downPerYear;
+      const top = Math.max(1, 100 - share);
+      const rank = top <= 25 ? `이날 움직임은 전체 거래일 중 상위 ${top}% 안에 드는 큰 편이에요.` : "이날 정도의 움직임은 꽤 흔한 크기예요.";
+      pts.push(["▦", `${since}년 이후 S&P 500이 하루 ${t}% 이상 ${spx > 0 ? "오른" : "내린"} 날은 1년에 평균 ${per}번꼴이에요. ${rank}`]);
+    }
+    const s = streak(k), d = dir(spx);
+    if (s >= 2 && s <= 10 && d !== "flat") {
+      const cnt = st.streaks[d === "up" ? "up" : "down"][s - 2];
+      pts.push(["↻", `${s}일 이상 연속 ${d === "up" ? "상승" : "하락"}은 ${since}년 이후 ${cnt.toLocaleString()}번 있었어요(1년에 약 ${(cnt / years).toFixed(1)}번).`]);
+    }
+    const dd = r.indices.spx.dd;
+    if (typeof dd === "number") {
+      if (dd >= 0) pts.push(["★", "이날 S&P 500은 역대 최고치를 새로 썼어요."]);
+      else {
+        const zone = dd <= -20 ? "고점보다 20% 넘게 빠진 '약세장' 구간이에요." : dd <= -10 ? "고점보다 10% 넘게 빠진 '조정' 구간이에요." : "10% 이상 빠지면 '조정', 20% 이상이면 '약세장'이라고 불러요.";
+        pts.push(["⌂", `이날 S&P 500은 역대 최고치보다 ${Math.abs(dd).toFixed(1)}% 낮은 위치였어요. ${zone}`]);
+      }
+    }
+    if (a >= 2) pts.push(["!", `참고로 역대 가장 크게 내린 날은 ${dateKo(st.worst.date)}(${pct(st.worst.chg)}), 가장 크게 오른 날은 ${dateKo(st.best.date)}(${pct(st.best.chg)})이에요.`]);
+    return pts;
+  }
   const pct = (v) => (typeof v === "number" ? (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%" : "–");
   const dir = (v) => (v >= 0.1 ? "up" : v <= -0.1 ? "down" : "flat");
   const fmt = (v) => v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -395,6 +481,16 @@ function startCalendar() {
     }
     side.append(card);
 
+    const hp = rec && rec.verdict !== "closed" ? historyPoints(selected) : [];
+    if (hp.length) {
+      side.append(el("h2", "sect", "과거 통계로 본 이날"));
+      const hc = el("section", "card");
+      const ul = el("ul", "points");
+      hp.forEach(([ic, text]) => { const li = el("li"); li.append(el("span", "ic", ic), el("span", null, text)); ul.append(li); });
+      hc.append(ul, el("div", "cdate", "과거 기록일 뿐 앞으로도 그렇다는 뜻은 아니에요."));
+      side.append(hc);
+    }
+
     if (rec && (rec.summary || rec.bullish?.length || rec.bearish?.length)) {
       side.append(el("h2", "sect", "왜 이렇게 움직였을까?"));
       const why = el("section", "card");
@@ -434,7 +530,10 @@ function startCalendar() {
       const box = el("section", "card");
       const sum = el("div", "summary");
       IDX.forEach(([key, name]) => { const d = el("div"); d.append(el("span", "k", name), el("span", "v num " + dir(st.ret[key]), pct(st.ret[key]))); sum.append(d); });
-      box.append(sum, el("p", "note", explainMonth(st, view.y, view.m)), el("div", "cdate", `거래일 ${st.n}일 중 오른 날 ${st.up}일, 내린 날 ${st.down}일 (S&P 500 기준)`));
+      const season = STATS.spx?.months?.[String(view.m + 1)];
+      box.append(sum, el("p", "note", explainMonth(st, view.y, view.m)));
+      if (season) box.append(el("p", "note", `참고로 ${yearOf(STATS.spx.start)}년 이후 ${view.m + 1}월의 S&P 500은 평균 ${pct(season.avg)}였고, ${season.years}번 중 ${season.upShare}%가 오른 달이었어요.`));
+      box.append(el("div", "cdate", `거래일 ${st.n}일 중 오른 날 ${st.up}일, 내린 날 ${st.down}일 (S&P 500 기준)`));
       side.append(box);
     }
 
@@ -489,6 +588,91 @@ function startCalendar() {
   document.getElementById("next").addEventListener("click", () => move(1));
   document.getElementById("today").addEventListener("click", () => { view = { y: now.getFullYear(), m: now.getMonth() }; render(); });
   document.addEventListener("keydown", (e) => { if (e.key === "ArrowLeft") move(-1); if (e.key === "ArrowRight") move(1); });
+
+  /* ---------- below the grid: sectors, rising themes, long-run facts ---------- */
+  function renderFlow() {
+    const flow = document.getElementById("flow");
+    flow.replaceChildren();
+    const head = (title, lead) => { const h = el("div"); h.append(el("h2", null, title)); if (lead) h.append(el("p", "lead", lead)); return h; };
+
+    if (SECTORS.length) {
+      const sec = el("section", "fsec");
+      sec.append(head("업종 성적표", `미국 주식을 업종별로 묶은 ETF의 최근 수익률이에요. 최근 1개월 기준으로 줄 세웠어요. (${window.MARKET_SECTORS.asOf ? label(window.MARKET_SECTORS.asOf) + " 종가 기준" : ""})`));
+      const rows = [...SECTORS].sort((a, b) => (b.m1 ?? -999) - (a.m1 ?? -999));
+      const maxAbs = Math.max(...rows.map((r) => Math.abs(r.m1 || 0)), 1);
+      const table = el("div", "sectors num");
+      const hr = el("div", "srow head");
+      ["업종", "최근 1개월", "1주", "1개월", "3개월"].forEach((t) => hr.append(el("span", null, t)));
+      table.append(hr);
+      rows.forEach((r, i) => {
+        const row = el("div", "srow");
+        const nm = el("span", "nm");
+        const b = el("b", null, r.name);
+        if (i < 3) b.append(el("span", "badge up", "요즘 강세"));
+        if (i >= rows.length - 3) b.append(el("span", "badge down", "요즘 약세"));
+        nm.append(b, el("small", null, `${r.about} · ${r.ticker}`));
+        const bar = el("span", "sbar"); const fill = el("i", "bg-" + dir(r.m1 || 0));
+        const w = (Math.abs(r.m1 || 0) / maxAbs) * 50;
+        fill.style.width = w + "%"; fill.style[r.m1 >= 0 ? "left" : "right"] = "50%";
+        bar.append(fill);
+        row.append(nm, bar, el("span", "v " + dir(r.w1 || 0), pct(r.w1)), el("span", "v " + dir(r.m1 || 0), pct(r.m1)), el("span", "v " + dir(r.m3 || 0), pct(r.m3)));
+        table.append(row);
+      });
+      sec.append(table);
+      flow.append(sec);
+    }
+
+    const tsec = el("section", "fsec");
+    const themes = TRENDS?.themes || [];
+    tsec.append(head("요즘 떠오르는 테마", themes.length
+      ? `Claude가 최근 기사와 위 업종 수익률을 바탕으로 정리한, 요즘 시장에서 많이 이야기되는 흐름이에요.${TRENDS.updatedAt ? " " + new Date(TRENDS.updatedAt).toLocaleDateString("ko-KR") + " 정리." : ""}`
+      : "매주 토요일 아침, Claude가 최근 기사와 업종 수익률을 바탕으로 요즘 많이 이야기되는 테마를 정리해 여기에 채워요."));
+    if (themes.length) {
+      const grid = el("div", "themes");
+      themes.forEach((t) => {
+        const c = el("article", "theme");
+        c.append(el("h3", null, t.name || ""));
+        if (t.oneLine) c.append(el("p", "one", t.oneLine));
+        if (t.why?.length) { const w = el("div"); w.append(el("div", "lbl2", "왜 주목받나요?")); const ul = el("ul"); t.why.forEach((x) => ul.append(el("li", null, x))); w.append(ul); c.append(w); }
+        if (t.companies?.length) {
+          const w = el("div"); w.append(el("div", "lbl2", "자주 언급되는 기업"));
+          const cos = el("div", "cos");
+          t.companies.forEach((co) => { const s = el("span", "co"); s.append(el("b", null, co.name), ` ${co.ticker ? "(" + co.ticker + ") " : ""}${co.what || ""}`); cos.append(s); });
+          w.append(cos); c.append(w);
+        }
+        if (t.risks) c.append(el("div", "risk", "주의할 점: " + t.risks));
+        const links = (t.sources || []).filter((u) => /^https:\/\//.test(u));
+        if (links.length) {
+          const src = el("div", "src", "출처 ");
+          links.forEach((u, i) => { const a = el("a", null, new URL(u).hostname.replace(/^www\./, "")); a.href = u; a.target = "_blank"; a.rel = "noopener"; if (i) src.append(" · "); src.append(a); });
+          c.append(src);
+        }
+        grid.append(c);
+      });
+      tsec.append(grid);
+    }
+    tsec.append(el("p", "disc", "특정 종목을 사거나 팔라는 추천이 아니에요. 요즘 시장에서 무엇이 이야기되는지 공부용으로 정리한 내용이고, 투자 판단과 책임은 본인에게 있어요."));
+    flow.append(tsec);
+
+    const st = STATS.spx;
+    if (st) {
+      const fsec = el("section", "fsec");
+      fsec.append(head("숫자로 보는 미국 증시", `S&P 500의 ${yearOf(st.start)}년부터 지금까지 ${st.days.toLocaleString()}거래일을 분석했어요. 주가 기준(배당 제외)이에요.`));
+      const facts = el("div", "facts");
+      const fact = (k, v, d, cls) => { const f = el("div", "fact"); f.append(el("span", "k", k), el("span", "v num " + (cls || ""), v), el("span", "d", d)); facts.append(f); };
+      fact("오른 날의 비율", `${st.upShare}%`, "하루하루는 거의 동전 던지기에 가까워요. 오른 날이 조금 더 많아요.");
+      fact("하루 ±1% 넘게 움직인 날", `연 ${(st.moves["1"].upPerYear + st.moves["1"].downPerYear).toFixed(0)}번`, "1% 넘게 출렁이는 날은 한 달에 4번 정도로 흔한 일이에요.");
+      fact("역대 최악의 하루", pct(st.worst.chg), `${dateKo(st.worst.date)}${st.worst.date === "1987-10-19" ? " '블랙 먼데이'" : ""}`, "down");
+      fact("역대 최고의 하루", pct(st.best.chg), dateKo(st.best.date), "up");
+      if (st.hold["1y"]) fact("1년 들고 있었을 때 손실 확률", `${st.hold["1y"].lossShare}%`, `아무 날이나 사서 1년 뒤에 팔았다면 ${Math.round(100 / st.hold["1y"].lossShare)}번 중 1번꼴로 손해였어요.`);
+      if (st.hold["10y"]) fact("10년 들고 있었을 때 손실 확률", `${st.hold["10y"].lossShare}%`, "보유 기간이 길수록 손실로 끝난 경우가 크게 줄었어요.");
+      fact("역대 최고치", fmt(st.ath.close), `${dateKo(st.ath.date)} 종가`);
+      fsec.append(facts, el("p", "disc", "모두 과거 기록이에요. 과거에 그랬다고 앞으로도 그렇다는 보장은 없어요."));
+      flow.append(fsec);
+    }
+  }
+
+  renderFlow();
   render();
 }
 // data.js changes every morning; skip the browser cache so the newest closes always show.
