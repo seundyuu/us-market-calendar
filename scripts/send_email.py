@@ -51,7 +51,32 @@ def date_ko(day):
     return f"{d.month}/{d.day}({DOW[d.weekday()]})"
 
 
-def build(days, sectors):
+def earnings_html(earnings, after_day):
+    """Large-cap reports over the next five weekdays after the latest trading day."""
+    if not earnings:
+        return ""
+    upcoming = [k for k in sorted(earnings) if k > after_day][:5]
+    if not upcoming:
+        return ""
+    when = {"pre": "장 시작 전", "after": "장 마감 후"}
+    lis = "".join(
+        f'<li style="margin:0 0 6px"><b>{date_ko(k)}</b> '
+        + ", ".join(
+            html.escape(x["name"]) + (f' <span style="color:{MUTED};font-size:12px">({when[x["time"]]})</span>' if x["time"] in when else "")
+            for x in earnings[k][:5]
+        )
+        + (f' <span style="color:{MUTED}">외 {len(earnings[k]) - 5}곳</span>' if len(earnings[k]) > 5 else "")
+        + "</li>"
+        for k in upcoming
+    )
+    return (
+        f'<h2 style="font-size:16px;margin:28px 0 8px">다가오는 대형주 실적 발표</h2>'
+        f'<ul style="margin:0;padding-left:18px">{lis}</ul>'
+        f'<p style="margin:6px 0 0;font-size:12px;color:{MUTED}">실적 발표 날은 해당 종목과 업종이 크게 움직일 수 있어요.</p>'
+    )
+
+
+def build(days, sectors, earnings=None):
     trade = [k for k in sorted(days) if days[k].get("indices")]
     day = trade[-1]
     rec = days[day]
@@ -119,6 +144,7 @@ def build(days, sectors):
   <table style="width:100%;border-collapse:collapse;font-size:14px">{rows}</table>
   {news}
   {sector_html}
+  {earnings_html(earnings, day)}
   <p style="margin:28px 0 0"><a href="{SITE}" style="display:inline-block;background:#1d1d1f;color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:600">캘린더에서 자세히 보기</a></p>
  </div>
  <p style="font-size:12px;color:{MUTED};line-height:1.6;margin:14px 4px 0">데이터: Yahoo Finance 종가. 뉴스 해석은 Claude가 기사를 찾아 요약한 내용이에요. 특정 종목을 사거나 팔라는 추천이 아니며 투자 조언이 아닙니다.</p>
@@ -135,7 +161,7 @@ def build(days, sectors):
 
 def main():
     days = load("days.json")
-    subject, text, body = build(days, load("sectors.json"))
+    subject, text, body = build(days, load("sectors.json"), load("earnings.json"))
 
     preview = os.environ.get("PREVIEW_FILE")
     if preview:

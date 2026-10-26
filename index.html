@@ -26,6 +26,7 @@
   --down-soft: #e8effe;
   --flat: #8e8e93;
   --flat-soft: #f0f0f2;
+  --earn: #8e44c9;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
   color-scheme: light;
 }
@@ -33,7 +34,7 @@
   :root {
     --bg: #1c1c1e; --side: #232325; --card: #2c2c2e; --fg: #f5f5f7; --muted: #98989d; --faint: #545458;
     --line: #38383a; --weekend: #202022; --other: #19191a; --today: #ff453a; --sel: #1f3350;
-    --up: #ff5b52; --up-soft: #3a2220; --down: #4d8dff; --down-soft: #1d2a45; --flat: #98989d; --flat-soft: #333336;
+    --up: #ff5b52; --up-soft: #3a2220; --down: #4d8dff; --down-soft: #1d2a45; --flat: #98989d; --flat-soft: #333336; --earn: #c08af2;
     color-scheme: dark;
   }
 }
@@ -85,7 +86,19 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--down); ou
 .cell.sel { box-shadow: inset 0 0 0 2px var(--down); }
 .cell.other .ev, .cell.other .tag { opacity: 0.55; }
 .up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--flat); }
-.bg-up { background: var(--up); } .bg-down { background: var(--down); } .bg-flat { background: var(--flat); }
+.bg-up { background: var(--up); } .bg-down { background: var(--down); } .bg-flat { background: var(--flat); } .bg-earn { background: var(--earn); }
+.earn { color: var(--earn); }
+.ev.earn { margin-top: 2px; }
+.ev.earn .lbl { font-weight: 600; }
+.ev.earn .enames { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.elist { display: grid; }
+.erow { display: grid; gap: 2px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
+.erow:first-child { border-top: 0; padding-top: 0; }
+.etop { display: flex; align-items: baseline; gap: 6px; }
+.etop b { font-weight: 600; font-size: 14.5px; }
+.etk { font-size: 11.5px; color: var(--muted); }
+.ewhat, .ewhen { font-size: 12.5px; color: var(--muted); }
+.eres { font-size: 13px; margin-top: 2px; }
 
 /* Inspector */
 .side { background: var(--side); border-left: 1px solid var(--line); padding: 18px 16px 32px; display: flex; flex-direction: column; gap: 22px; min-width: 0; }
@@ -189,6 +202,8 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
   .ev { justify-content: center; padding: 1px 2px; font-size: 11px; }
   .ev .val { margin-left: 0; }
   .ev .dot { display: none; }
+  .ev.earn .enames { display: none; }
+  .ev.earn .dot { display: inline-block; }
 }
 </style>
 </head>
@@ -202,6 +217,7 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
           <span><i class="bg-up"></i>오른 날</span>
           <span><i class="bg-down"></i>내린 날</span>
           <span><i class="bg-flat"></i>거의 그대로</span>
+          <span><i class="bg-earn"></i>대형주 실적 발표</span>
           <span>날짜를 누르면 쉬운 해석이 나와요</span>
         </div>
       </div>
@@ -240,6 +256,29 @@ function startCalendar() {
   const STATS = window.MARKET_STATS?.indices || {};
   const SECTORS = window.MARKET_SECTORS?.sectors || [];
   const TRENDS = window.MARKET_TRENDS;
+  const EARN = window.MARKET_EARNINGS || {};
+  const WHEN = { pre: "장 시작 전 발표 · 한국 시간 그날 밤", after: "장 마감 후 발표 · 한국 시간 다음 날 새벽", unknown: "발표 시간 미정" };
+  function earnRow(x) {
+    const row = el("div", "erow");
+    const top = el("div", "etop");
+    top.append(el("b", null, x.name), el("span", "etk", x.symbol));
+    row.append(top);
+    if (x.what) row.append(el("div", "ewhat", x.what));
+    row.append(el("div", "ewhen", WHEN[x.time] || WHEN.unknown));
+    const usd = (v) => `${v < 0 ? "−" : ""}${Math.abs(v).toFixed(2)}달러`;
+    if (typeof x.eps === "number") {
+      const r = el("div", "eres num");
+      r.append(`주당순이익(EPS) ${usd(x.eps)}`);
+      if (typeof x.surprise === "number" && typeof x.epsForecast === "number") {
+        const good = x.surprise >= 0;
+        r.append(" · ", el("span", good ? "up" : "down", `예상(${usd(x.epsForecast)})보다 ${Math.abs(x.surprise).toFixed(1)}% ${good ? "좋았어요" : "나빴어요"}`));
+      }
+      row.append(r);
+    } else if (typeof x.epsForecast === "number") {
+      row.append(el("div", "eres num", `예상 주당순이익(EPS) ${usd(x.epsForecast)}`));
+    }
+    return row;
+  }
   const yearOf = (k) => k ? k.slice(0, 4) : "";
   const dateKo = (k) => { const [y, m, d] = k.split("-").map(Number); return `${y}년 ${m}월 ${d}일`; };
 
@@ -412,7 +451,8 @@ function startCalendar() {
       const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
       const k = iso(d);
       const rec = DAYS[k];
-      const cell = el(rec ? "button" : "div", "cell");
+      const earn = EARN[k] || [];
+      const cell = el(rec || earn.length ? "button" : "div", "cell");
       const wd = d.getDay();
       if (wd === 0) cell.classList.add("sun", "wkend");
       if (wd === 6) cell.classList.add("sat", "wkend");
@@ -423,9 +463,6 @@ function startCalendar() {
       head.append(dnum);
       cell.append(head);
       if (rec) {
-        cell.type = "button";
-        cell.classList.add("has");
-        if (k === selected) cell.classList.add("sel");
         if (rec.verdict === "closed") {
           head.insertBefore(el("span", "tag closed", rec.holiday ? `휴장 · ${rec.holiday}` : "휴장"), dnum);
           cell.setAttribute("aria-label", `${label(k)} 휴장`);
@@ -442,6 +479,19 @@ function startCalendar() {
           });
           cell.setAttribute("aria-label", `${label(k)} ${tagWord(spx)}, S&P 500 ${pct(spx)}`);
         }
+      }
+      if (earn.length) {
+        const names = earn.slice(0, 2).map((x) => x.name).join("·");
+        const ev = el("div", "ev earn");
+        ev.append(el("span", "dot bg-earn"), el("span", "lbl", "실적"), el("span", "enames", names + (earn.length > 2 ? ` +${earn.length - 2}` : "")));
+        ev.title = earn.map((x) => x.name).join(", ");
+        cell.append(ev);
+        if (!rec) cell.setAttribute("aria-label", `${label(k)} 실적 발표: ${ev.title}`);
+      }
+      if (rec || earn.length) {
+        cell.type = "button";
+        cell.classList.add("has");
+        if (k === selected) cell.classList.add("sel");
         cell.addEventListener("click", () => { selected = k; render(); });
       }
       grid.append(cell);
@@ -454,7 +504,11 @@ function startCalendar() {
     const rec = selected && DAYS[selected];
 
     const card = el("section", "card");
-    if (!rec) {
+    if (!rec && selected && EARN[selected]) {
+      const future = selected >= todayKey;
+      card.append(el("div", "kicker earn", "실적 발표일"), el("div", "ctitle", label(selected)),
+        el("p", "plain", future ? "이날은 아직 장이 열리기 전이에요. 아래 기업들이 실적을 발표할 예정이라 해당 종목이나 업종이 크게 움직일 수 있어요." : "이날의 지수 기록은 없지만, 아래 기업들이 실적을 발표했어요."));
+    } else if (!rec) {
       card.append(el("p", "empty", "아직 기록이 없습니다. 매일 아침 7시(한국 시간)에 전날 미국 장 마감 결과가 추가됩니다."));
     } else if (rec.verdict === "closed") {
       card.append(el("div", "kicker flat", "휴장"), el("div", "ctitle", rec.holiday || "미국 증시 휴장일"), el("div", "cdate", `${label(selected)} · 뉴욕 기준`));
@@ -480,6 +534,16 @@ function startCalendar() {
       card.append(rows);
     }
     side.append(card);
+
+    const earnToday = (selected && EARN[selected]) || [];
+    if (earnToday.length) {
+      side.append(el("h2", "sect", `실적 발표 ${earnToday.length}곳`));
+      const ec = el("section", "card");
+      const list = el("div", "elist");
+      earnToday.forEach((x) => list.append(earnRow(x)));
+      ec.append(list, el("div", "cdate", "실적 발표 = 회사가 지난 3개월 동안 얼마나 벌었는지 공개하는 날이에요. 예상과 차이가 크면 주가가 크게 움직여요."));
+      side.append(ec);
+    }
 
     const hp = rec && rec.verdict !== "closed" ? historyPoints(selected) : [];
     if (hp.length) {
@@ -537,6 +601,23 @@ function startCalendar() {
       side.append(box);
     }
 
+    const upcoming = Object.keys(EARN).filter((k) => k >= todayKey).sort().slice(0, 8);
+    if (upcoming.length) {
+      side.append(el("h2", "sect", "다가오는 실적 발표"));
+      const list = el("div", "list");
+      upcoming.forEach((k) => {
+        const b = el("button", "item" + (k === selected ? " on" : ""));
+        b.type = "button";
+        const body = el("div");
+        const names = EARN[k].slice(0, 4).map((x) => x.name).join(", ");
+        body.append(el("div", "d", label(k)), el("div", "t", names + (EARN[k].length > 4 ? ` 외 ${EARN[k].length - 4}곳` : "")));
+        b.append(el("span", "stripe bg-earn"), body);
+        b.addEventListener("click", () => { selected = k; view = { y: +k.slice(0, 4), m: +k.slice(5, 7) - 1 }; render(); });
+        list.append(b);
+      });
+      side.append(list);
+    }
+
     const recent = keys.slice(-10).reverse();
     if (recent.length) {
       side.append(el("h2", "sect", "최근 거래일"));
@@ -573,6 +654,9 @@ function startCalendar() {
       ["보합", "거의 변화가 없는 상태예요. 이 캘린더에서는 S&P 500 등락이 ±0.1% 안쪽일 때 보합으로 봐요."],
       ["급등·급락", "하루에 2% 넘게 움직인 날이에요. 1년에 몇 번 없는, 시장이 크게 놀란 날이에요."],
       ["휴장", "미국 공휴일이라 증시가 열리지 않은 날이에요. 토·일요일도 열리지 않아요."],
+      ["실적 발표", "상장 회사가 3개월마다 매출과 이익을 공개하는 날이에요. 결과가 시장 예상과 얼마나 다른지에 따라 주가가 크게 움직여요."],
+      ["EPS (주당순이익)", "회사가 번 순이익을 주식 수로 나눈 값이에요. '주식 1주당 얼마를 벌었나'를 뜻해요."],
+      ["어닝 서프라이즈", "실제 실적이 전문가들의 예상보다 좋게 나온 것이에요. 반대로 나쁘게 나오면 '어닝 쇼크'라고 해요. 다만 예상보다 좋아도 주가가 내릴 때가 있어요."],
       ["빨강·파랑", "한국 증시 앱처럼 오르면 빨강, 내리면 파랑이에요. 미국 앱은 반대로 오르면 초록, 내리면 빨강을 써요."],
     ].forEach(([t, d]) => { dl.append(el("dt", null, t), el("dd", null, d)); });
     help.append(dl);

@@ -16,6 +16,7 @@ DAYS_JSON = ROOT / "data" / "days.json"
 STATS_JSON = ROOT / "data" / "stats.json"
 SECTORS_JSON = ROOT / "data" / "sectors.json"
 TRENDS_JSON = ROOT / "data" / "trends.json"  # written weekly by the Claude news task
+EARNINGS_JSON = ROOT / "data" / "earnings.json"
 DATA_JS = ROOT / "data.js"
 NY = ZoneInfo("America/New_York")
 
@@ -36,6 +37,51 @@ SECTORS = [
     ("XLB", "소재", "화학·금속·광산"),
     ("XLRE", "부동산", "리츠·부동산 임대"),
 ]
+
+# Earnings calendar: these well-known names always show, plus anything worth at least EARNINGS_MIN_CAP.
+EARNINGS_MIN_CAP = 150e9
+EARNINGS_WINDOW = (-14, 42)  # days around today to (re)fetch each run
+WATCHLIST = {
+    "AAPL": ("애플", "아이폰·맥"), "MSFT": ("마이크로소프트", "윈도·클라우드"), "NVDA": ("엔비디아", "AI 반도체"),
+    "AMZN": ("아마존", "온라인 쇼핑·클라우드"), "GOOGL": ("알파벳(구글)", "검색·유튜브"), "GOOG": ("알파벳(구글)", "검색·유튜브"),
+    "META": ("메타", "페이스북·인스타그램"), "TSLA": ("테슬라", "전기차"), "AVGO": ("브로드컴", "통신·AI 반도체"),
+    "TSM": ("TSMC", "반도체 위탁생산"), "NFLX": ("넷플릭스", "영상 스트리밍"), "AMD": ("AMD", "CPU·GPU 반도체"),
+    "INTC": ("인텔", "CPU 반도체"), "MU": ("마이크론", "메모리 반도체"), "QCOM": ("퀄컴", "스마트폰 칩"),
+    "ORCL": ("오라클", "데이터베이스·클라우드"), "CRM": ("세일즈포스", "기업용 소프트웨어"), "ADBE": ("어도비", "포토샵·디자인 SW"),
+    "PLTR": ("팔란티어", "데이터 분석 SW"), "ASML": ("ASML", "반도체 장비"), "JPM": ("JP모건", "미국 최대 은행"),
+    "V": ("비자", "카드 결제망"), "MA": ("마스터카드", "카드 결제망"), "WMT": ("월마트", "대형마트"),
+    "COST": ("코스트코", "창고형 할인점"), "KO": ("코카콜라", "음료"), "PEP": ("펩시코", "음료·과자"),
+    "MCD": ("맥도날드", "패스트푸드"), "SBUX": ("스타벅스", "커피"), "NKE": ("나이키", "스포츠용품"),
+    "DIS": ("디즈니", "영화·테마파크"), "BA": ("보잉", "항공기"), "LLY": ("일라이 릴리", "비만·당뇨 치료제"),
+    "UNH": ("유나이티드헬스", "건강보험"), "JNJ": ("존슨앤드존슨", "제약·의료기기"), "PG": ("P&G", "생활용품"),
+    "XOM": ("엑슨모빌", "석유·가스"), "BRK.B": ("버크셔 해서웨이", "워런 버핏의 지주회사"),
+    "SPCX": ("스페이스X", "로켓·위성 인터넷"),
+}
+# Korean names for other large caps that show up only because of their size.
+NAMES_KO = {
+    "ABBV": ("애브비", "제약"), "ABT": ("애보트", "의료기기·진단"), "ADI": ("아날로그 디바이스", "아날로그 반도체"),
+    "AMAT": ("어플라이드 머티어리얼즈", "반도체 장비"), "AMGN": ("암젠", "바이오 제약"), "ANET": ("아리스타 네트웍스", "데이터센터 네트워크"),
+    "APH": ("암페놀", "전자 커넥터"), "ARM": ("Arm", "반도체 설계"), "AXP": ("아메리칸 익스프레스", "신용카드"),
+    "AZN": ("아스트라제네카", "제약"), "BABA": ("알리바바", "중국 전자상거래"), "BAC": ("뱅크오브아메리카", "은행"),
+    "BHP": ("BHP", "광산"), "BLK": ("블랙록", "자산운용"), "BRK.A": ("버크셔 해서웨이", "워런 버핏의 지주회사"),
+    "BUD": ("AB인베브", "맥주"), "C": ("씨티그룹", "은행"), "CAT": ("캐터필러", "건설·광산 장비"),
+    "COP": ("코노코필립스", "석유·가스"), "CRWD": ("크라우드스트라이크", "사이버보안"), "CSCO": ("시스코", "네트워크 장비"),
+    "CVX": ("셰브런", "석유·가스"), "DE": ("디어", "농기계"), "DELL": ("델", "PC·서버"), "DHR": ("다나허", "생명과학 장비"),
+    "GE": ("GE 에어로스페이스", "항공기 엔진"), "GEV": ("GE 버노바", "발전 설비"), "GILD": ("길리어드", "바이오 제약"),
+    "GS": ("골드만삭스", "투자은행"), "HD": ("홈디포", "집수리 용품점"), "HSBC": ("HSBC", "은행"), "IBM": ("IBM", "IT 서비스"),
+    "ISRG": ("인튜이티브 서지컬", "수술 로봇"), "KLAC": ("KLA", "반도체 장비"), "LIN": ("린데", "산업용 가스"),
+    "LRCX": ("램리서치", "반도체 장비"), "MRK": ("머크", "제약"), "MRVL": ("마벨", "데이터센터 반도체"),
+    "MS": ("모건스탠리", "투자은행"), "MUFG": ("미쓰비시UFJ", "일본 은행"), "NEE": ("넥스트에라", "전력·신재생"),
+    "NOW": ("서비스나우", "기업용 소프트웨어"), "NVO": ("노보 노디스크", "비만·당뇨 치료제"), "NVS": ("노바티스", "제약"),
+    "PANW": ("팔로알토 네트웍스", "사이버보안"), "PBR": ("페트로브라스", "브라질 석유"), "PBR.A": ("페트로브라스", "브라질 석유"),
+    "PFE": ("화이자", "제약"), "PM": ("필립모리스", "담배"), "RTX": ("RTX", "방산·항공"), "RY": ("캐나다왕립은행", "은행"),
+    "SAN": ("산탄데르", "스페인 은행"), "SAP": ("SAP", "기업용 소프트웨어"), "SCCO": ("서던코퍼", "구리 광산"),
+    "SCHW": ("찰스 슈왑", "증권사"), "SHEL": ("셸", "석유·가스"), "SHOP": ("쇼피파이", "온라인 쇼핑몰 플랫폼"),
+    "SMFG": ("미쓰이스미토모", "일본 은행"), "SNDK": ("샌디스크", "저장장치"), "SONY": ("소니", "게임·전자"),
+    "TD": ("TD은행", "캐나다 은행"), "TJX": ("TJX", "할인 의류점"), "TM": ("도요타", "자동차"), "TMO": ("써모피셔", "실험 장비"),
+    "TMUS": ("T모바일", "이동통신"), "TTE": ("토탈에너지", "석유·가스"), "TXN": ("텍사스 인스트루먼트", "아날로그 반도체"),
+    "UNP": ("유니온 퍼시픽", "철도"), "VZ": ("버라이즌", "이동통신"), "WELL": ("웰타워", "헬스케어 리츠"), "WFC": ("웰스파고", "은행"),
+}
 HOSTS = ("query1.finance.yahoo.com", "query2.finance.yahoo.com")
 LOOKBACK_DAYS = 45  # re-check this window every run so missed days fill themselves
 FLAT_THRESHOLD = 0.1  # |S&P 500 %| below this counts as 보합
@@ -205,6 +251,88 @@ def sector_stats(now):
     return {"asOf": max((r["asOf"] for r in rows), default=None), "sectors": rows}
 
 
+def money(s):
+    """'$1,234.5' / '($0.12)' / 'N/A' -> float or None."""
+    s = (s or "").strip().replace("$", "").replace(",", "")
+    neg = s.startswith("(") and s.endswith(")")
+    s = s.strip("()")
+    try:
+        return -float(s) if neg else float(s)
+    except ValueError:
+        return None
+
+
+def clean_name(name):
+    """'The Goldman Sachs Group, Inc.' -> 'Goldman Sachs Group' for companies without a Korean name."""
+    name = name.strip()
+    if name.startswith("The "):
+        name = name[4:]
+    for tail in (" (The)", ", Inc.", " Inc.", " Inc", " Corporation", " Corp.", " Company", " plc", " PLC", " Ltd Ord",
+                 " Limited", " S.A.", " A/S", " SE", " AG", " N.V.", " Holdings", " Holding"):
+        if name.endswith(tail):
+            name = name[: -len(tail)]
+    return name.strip(" ,")
+
+
+def fetch_earnings_day(day):
+    req = urllib.request.Request(
+        f"https://api.nasdaq.com/api/calendar/earnings?date={day}",
+        headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
+    )
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                return ((json.load(resp).get("data") or {}).get("rows")) or []
+        except Exception as e:
+            last = e
+            time.sleep(2 * (attempt + 1))
+    raise RuntimeError(f"earnings {day}: {last}")
+
+
+def earnings_calendar(now):
+    """{YYYY-MM-DD: [large-cap reports]} for the window around today, merged into the stored file."""
+    stored = json.loads(EARNINGS_JSON.read_text("utf-8")) if EARNINGS_JSON.exists() else {}
+    today = now.date()
+    for offset in range(EARNINGS_WINDOW[0], EARNINGS_WINDOW[1] + 1):
+        day = today + dt.timedelta(days=offset)
+        if day.weekday() >= 5:
+            continue
+        key = day.isoformat()
+        try:
+            rows = fetch_earnings_day(key)
+        except RuntimeError as e:
+            print(f"skip {e}")
+            continue
+        picked = []
+        for r in rows:
+            sym = (r.get("symbol") or "").upper()
+            cap = money(r.get("marketCap"))
+            if sym not in WATCHLIST and (cap or 0) < EARNINGS_MIN_CAP:
+                continue
+            ko, what = WATCHLIST.get(sym) or NAMES_KO.get(sym) or (None, None)
+            surprise = money(r.get("surprise"))
+            picked.append({
+                "symbol": sym,
+                "name": ko or clean_name(r.get("name") or sym),
+                "what": what,
+                "time": {"time-pre-market": "pre", "time-after-hours": "after"}.get(r.get("time"), "unknown"),
+                "capB": round(cap / 1e9) if cap else None,
+                "epsForecast": money(r.get("epsForecast")),
+                "eps": money(r.get("eps")),
+                "surprise": surprise,
+            })
+        picked.sort(key=lambda x: (x["symbol"] not in WATCHLIST, -(x["capB"] or 0)))
+        # One row per company: GOOG/GOOGL, BRK.A/BRK.B, PBR/PBR.A share a name.
+        seen = set()
+        picked = [p for p in picked if not (p["name"] in seen or seen.add(p["name"]))]
+        if picked:
+            stored[key] = picked
+        else:
+            stored.pop(key, None)
+        time.sleep(0.3)
+    return dict(sorted(stored.items()))
+
+
 def write_json(path, obj):
     path.write_text(json.dumps(obj, ensure_ascii=False, indent=1) + "\n", "utf-8")
 
@@ -259,6 +387,8 @@ def main():
     sectors = sector_stats(now)
     write_json(SECTORS_JSON, sectors)
     trends = json.loads(TRENDS_JSON.read_text("utf-8")) if TRENDS_JSON.exists() else None
+    earnings = earnings_calendar(now)
+    write_json(EARNINGS_JSON, earnings)
 
     dump = lambda o: json.dumps(o, ensure_ascii=False)
     DATA_JS.write_text(
@@ -266,7 +396,8 @@ def main():
         f"window.MARKET_DAYS = {dump(ordered)};\n"
         f"window.MARKET_STATS = {dump(stats)};\n"
         f"window.MARKET_SECTORS = {dump(sectors)};\n"
-        f"window.MARKET_TRENDS = {dump(trends)};\n",
+        f"window.MARKET_TRENDS = {dump(trends)};\n"
+        f"window.MARKET_EARNINGS = {dump(earnings)};\n",
         "utf-8",
     )
     print(f"updated {len(changed)} day(s): {', '.join(sorted(changed)) or '-'}")
