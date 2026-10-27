@@ -42,7 +42,12 @@
 html, body { height: 100%; }
 body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 14px; -webkit-font-smoothing: antialiased; }
 .num { font-variant-numeric: tabular-nums; }
-.app { display: grid; grid-template-columns: minmax(0, 1fr) 360px; min-height: 100%; }
+/* Desktop: calendar and market flow on the left, the selected day's sidebar spanning the right.
+   Narrow screens stack calendar → selected day → market flow, so a tapped date's details sit right under the grid. */
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-rows: auto 1fr; grid-template-areas: "month side" "flow side"; min-height: 100%; }
+.month { grid-area: month; }
+.side { grid-area: side; }
+.flow { grid-area: flow; align-self: start; }
 
 /* Month view */
 .month { display: flex; flex-direction: column; min-width: 0; align-self: start; }
@@ -150,7 +155,8 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
 .empty { color: var(--muted); font-size: 14px; }
 
 @media (max-width: 1100px) {
-  .app { grid-template-columns: minmax(0, 1fr); }
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "month" "side" "flow"; }
+  .flow { border-top: 1px solid var(--line); }
   .side { border-left: 0; border-top: 1px solid var(--line); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 }
 /* Market flow: sector report card, rising themes, long-run facts (below the month grid) */
@@ -229,9 +235,9 @@ dl.terms dd { margin: 2px 0 0; font-size: 13px; line-height: 1.55; color: var(--
     </div>
     <div class="dows" id="dows"></div>
     <div class="grid" id="grid"></div>
-    <section class="flow" id="flow" aria-label="요즘 시장 흐름"></section>
   </main>
   <aside class="side" id="side" aria-live="polite"></aside>
+  <section class="flow" id="flow" aria-label="요즘 시장 흐름"></section>
 </div>
 
 <script>
@@ -492,7 +498,7 @@ function startCalendar() {
         cell.type = "button";
         cell.classList.add("has");
         if (k === selected) cell.classList.add("sel");
-        cell.addEventListener("click", () => { selected = k; render(); });
+        cell.addEventListener("click", () => { selected = k; render(); revealDetail(); });
       }
       grid.append(cell);
     }
@@ -667,6 +673,12 @@ function startCalendar() {
   }
 
   function render() { renderGrid(); renderSide(); }
+  // When the details stack under the grid (phones, narrow windows), bring them into view after a tap.
+  function revealDetail() {
+    if (!matchMedia("(max-width: 1100px)").matches) return;
+    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById("side").scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+  }
   const move = (delta) => { const d = new Date(view.y, view.m + delta, 1); view = { y: d.getFullYear(), m: d.getMonth() }; render(); };
   document.getElementById("prev").addEventListener("click", () => move(-1));
   document.getElementById("next").addEventListener("click", () => move(1));
