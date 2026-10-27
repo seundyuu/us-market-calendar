@@ -912,5 +912,62 @@
    "https://bbntimes.com/global-economy/dow-jones-today-djia-falls-to-52-215-16-as-american-express-slides-and-oil-prices-jump"
   ],
   "newsAt": "2026-10-26T00:00:00Z"
+ },
+ "2026-10-26": {
+  "bearish": [
+   {
+    "note": "다우에 포함된 큰 회사가 떨어져 다우 상승폭이 작았어요.",
+    "title": "버라이즌 실적 후 3% 넘게 하락"
+   },
+   {
+    "note": "이번 주 금리 결정과 마이크로소프트·알파벳·아마존 실적에 따라 분위기가 바뀔 수 있어 조심스러워요.",
+    "title": "연준 회의·빅테크 실적 앞둔 경계감"
+   }
+  ],
+  "bullish": [
+   {
+    "note": "AI 기업 가치에 대한 기대가 다시 살아나 기술주 전반에 힘이 됐어요.",
+    "title": "앤트로픽 상장 신청(S-1 제출)"
+   },
+   {
+    "note": "덩치 큰 반도체 회사들이 오르면 나스닥과 S&P 500이 함께 올라요.",
+    "title": "엔비디아·AMD·마이크론 등 반도체 반등"
+   },
+   {
+    "note": "이란 관련 대화 기대에 기름값이 조금 내려 물가·비용 부담이 줄었어요.",
+    "title": "유가 소폭 하락"
+   }
+  ],
+  "date": "2026-10-26",
+  "indices": {
+   "dji": {
+    "chg": 0.28,
+    "close": 52361.58,
+    "dd": -3.66,
+    "prev": 52215.16
+   },
+   "ndx": {
+    "chg": 0.82,
+    "close": 26169.38,
+    "dd": -5.18,
+    "prev": 25955.34
+   },
+   "spx": {
+    "chg": 0.7,
+    "close": 7676.77,
+    "dd": -1.82,
+    "prev": 7623.68
+   }
+  },
+  "newsAt": "2026-10-27T00:51:24Z",
+  "sources": [
+   "https://www.cnbc.com/2026/10/25/stock-market-today-live-updates.html",
+   "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-oct-26-2026",
+   "https://finance.yahoo.com/markets/stocks/articles/stock-market-today-oct-26-134626728.html",
+   "https://fool.com/coverage/stock-market-today/2026/10/26/stock-market-today-oct-26-ai-optimism-lifts-nasdaq-as-tech-stocks-rebound"
+  ],
+  "summary": "AI 회사 앤트로픽(Anthropic)이 상장(IPO) 신청서를 냈다는 소식에 한동안 식었던 AI 투자 열기가 되살아나면서 기술주 중심의 나스닥이 0.82%로 가장 많이 올랐어요. 최근 크게 빠졌던 엔비디아·AMD·마이크론 같은 반도체 주식이 2~3%씩 반등했고, 유가가 조금 내린 것도 도움이 됐어요. 다우는 버라이즌이 실적 발표 후 떨어지면서 0.28% 상승에 그쳤어요.",
+  "updatedAt": "2026-10-27T00:31:33Z",
+  "verdict": "up"
  }
 }
