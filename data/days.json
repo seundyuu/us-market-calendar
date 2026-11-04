@@ -1307,5 +1307,62 @@
    "https://www.fool.com/coverage/stock-market-today/2026/11/03/stock-market-today-nov-3-markets-edge-higher-as-semiconductor-stocks-rebound/"
   ],
   "newsAt": "2026-11-03T23:47:57Z"
+ },
+ "2026-11-04": {
+  "date": "2026-11-04",
+  "verdict": "up",
+  "indices": {
+   "spx": {
+    "close": 7688.62,
+    "prev": 7568.92,
+    "chg": 1.58,
+    "dd": -1.67
+   },
+   "ndx": {
+    "close": 25736.51,
+    "prev": 25372.01,
+    "chg": 1.44,
+    "dd": -6.75
+   },
+   "dji": {
+    "close": 53356.12,
+    "prev": 51786.72,
+    "chg": 3.03,
+    "dd": -1.83
+   }
+  },
+  "updatedAt": "2026-11-04T22:47:45Z",
+  "summary": "미국 중간선거에서 민주당이 상·하원을 모두 가져가는 결과가 빨리 확정되면서 '정치 불확실성'이 걷혔고, 국제유가가 8% 넘게 급락하자 주식시장이 크게 올랐어요. 특히 다우가 3% 넘게 뛰어 2025년 4월 이후 가장 좋은 하루를 보냈는데, 병원·건강보험·할인점처럼 새 의회 정책 덕을 볼 수 있다고 본 종목들이 많이 올랐기 때문이에요. S&P 500(+1.6%)과 나스닥(+1.4%)도 함께 올랐어요.",
+  "bullish": [
+   {
+    "note": "결과를 두고 며칠씩 기다리지 않아도 돼서 '모르는 위험'이 줄어드니 투자자들이 안심하고 주식을 샀어요.",
+    "title": "선거 결과가 빠르고 분명하게 나옴"
+   },
+   {
+    "note": "기름값이 내려가면 기업 비용과 물가 부담이 줄어서 대부분의 회사에 좋은 소식이에요.",
+    "title": "국제유가 급락 (브렌트유 약 -8.7%)"
+   },
+   {
+    "note": "민주당 의회가 의료·식료품 지원 삭감을 되돌릴 수 있다는 기대에 HCA·센틴·달러트리 같은 종목이 크게 올랐어요.",
+    "title": "헬스케어·할인점 주가 강세"
+   }
+  ],
+  "bearish": [
+   {
+    "note": "유가가 급락하면 석유회사들의 벌이가 줄어들 거라 보고 에너지주는 떨어졌어요.",
+    "title": "에너지(정유) 주식 하락"
+   },
+   {
+    "note": "테슬라 등 트럼프 정부와 가깝다고 여겨진 일부 종목은 시장 상승에서 뒤처졌어요.",
+    "title": "트럼프 관련 종목 부진"
+   }
+  ],
+  "sources": [
+   "https://www.cnbc.com/2026/11/03/stock-market-today-live-updates.html",
+   "https://finance.yahoo.com/markets/live/stock-market-today-dow-sp-500-nasdaq-midterm-elections-earnings-140752043.html",
+   "https://kstp.com/kstp-news/business-news/us-stocks-surge-and-the-dow-soars-1500-points-as-oil-prices-tumble-following-the-midterm-elections/",
+   "https://www.nbcnews.com/business/markets/stock-futures-blue-tsunami-ai-boom-rcna607351"
+  ],
+  "newsAt": "2026-11-04T22:45:18Z"
  }
 }
