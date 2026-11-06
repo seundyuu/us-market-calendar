@@ -1364,5 +1364,30 @@
    "https://www.nbcnews.com/business/markets/stock-futures-blue-tsunami-ai-boom-rcna607351"
   ],
   "newsAt": "2026-11-04T22:45:18Z"
+ },
+ "2026-11-05": {
+  "date": "2026-11-05",
+  "verdict": "down",
+  "indices": {
+   "spx": {
+    "close": 7353.73,
+    "prev": 7688.62,
+    "chg": -4.36,
+    "dd": -5.95
+   },
+   "ndx": {
+    "close": 24315.0,
+    "prev": 25736.51,
+    "chg": -5.52,
+    "dd": -11.9
+   },
+   "dji": {
+    "close": 51523.06,
+    "prev": 53356.12,
+    "chg": -3.44,
+    "dd": -5.2
+   }
+  },
+  "updatedAt": "2026-11-06T02:00:00Z"
  }
 }
