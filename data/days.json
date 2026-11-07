@@ -1423,5 +1423,30 @@
    "https://investing.com/news/economy-news/trading-day-a-november-5-market-bonfire-5005919"
   ],
   "newsAt": "2026-11-06T01:04:32Z"
+ },
+ "2026-11-06": {
+  "date": "2026-11-06",
+  "verdict": "up",
+  "indices": {
+   "spx": {
+    "close": 7376.86,
+    "prev": 7353.73,
+    "chg": 0.31,
+    "dd": -5.65
+   },
+   "ndx": {
+    "close": 24579.42,
+    "prev": 24315.0,
+    "chg": 1.09,
+    "dd": -10.94
+   },
+   "dji": {
+    "close": 51285.73,
+    "prev": 51523.06,
+    "chg": -0.46,
+    "dd": -5.64
+   }
+  },
+  "updatedAt": "2026-11-07T01:39:00Z"
  }
 }
