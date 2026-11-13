@@ -1,128 +1,107 @@
 {
- "updatedAt": "2026-11-02T22:38:06Z",
- "basis": "최근 2~4주 CNBC·야후파이낸스·CBS·Axios 등의 미국 증시 보도와, 이 사이트의 섹터 ETF 1주·1개월·3개월 수익률(11월 2일 기준)을 함께 보고 정리했어요.",
+ "updatedAt": "2026-11-13T13:20:09Z",
+ "basis": "최근 2~4주(10월 말~11월 12일) CNBC·블룸버그·야후파이낸스·모닝스타 보도와 11월 12일 기준 섹터 ETF 수익률(1주·1개월·3개월)을 함께 보고 정리했어요.",
  "themes": [
   {
-   "name": "AI 반도체·기술주 급락",
-   "oneLine": "그동안 시장을 이끌던 AI 칩·빅테크 주식이 한 달 사이 크게 떨어지고 있다는 이야기예요.",
+   "name": "AI 반도체 흔들림과 엔비디아 충격",
+   "oneLine": "AI용 칩을 만드는 반도체 회사들이 크게 빠졌다가 반등하는 등 롤러코스터를 타고 있는 흐름이에요.",
    "why": [
-    "반도체 ETF(SMH)는 최근 1개월 -19.39%, 1주 -6.15%, 기술 ETF(XLK)는 1개월 -12.81%로 가장 약한 업종이에요.",
-    "10월 29일 알파벳이 실적 실망으로 하루 약 12.6% 떨어졌고, 다음 날 나스닥은 2.86% 급락했어요.",
-    "11월 2일에도 마벨(약 -13%)·루멘텀(-18%)이 대형 인수 발표 뒤 급락하며 반도체주 약세가 이어졌어요."
+    "11월 5일 중간선거 뒤 데이터센터 규제 우려로 반도체지수가 하루에 12.2% 급락했어요.",
+    "그 뒤 반등해 반도체 ETF(SMH)는 1주 +12.1%지만, 1개월 -11.2%, 3개월 -14.7%로 아직 많이 빠져 있어요.",
+    "11월 12일 엔비디아 젠슨 황 CEO가 사임했고, 경쟁사 AMD·브로드컴이 5% 넘게 오르는 등 업계 판도에 관심이 쏠려요."
    ],
    "companies": [
     {
      "name": "엔비디아",
      "ticker": "NVDA",
-     "what": "AI 학습·추론용 GPU 칩을 만드는 회사"
+     "what": "AI 학습·추론용 GPU 칩 1위 업체"
     },
     {
-     "name": "마벨 테크놀로지",
-     "ticker": "MRVL",
-     "what": "데이터센터용 통신·맞춤형 반도체 설계"
+     "name": "AMD",
+     "ticker": "AMD",
+     "what": "CPU·GPU를 만드는 엔비디아의 경쟁사"
     },
     {
-     "name": "알파벳(구글)",
-     "ticker": "GOOGL",
-     "what": "구글 검색·유튜브·클라우드 운영"
+     "name": "브로드컴",
+     "ticker": "AVGO",
+     "what": "빅테크 맞춤형 AI 칩·통신칩 설계"
+    },
+    {
+     "name": "코어위브",
+     "ticker": "CRWV",
+     "what": "AI용 GPU를 빌려주는 클라우드 회사"
     }
    ],
-   "risks": "이미 많이 오른 뒤라 실적이 조금만 기대에 못 미쳐도 하루에 10% 넘게 빠질 만큼 변동이 커요. 엔비디아 실적 같은 이벤트에 따라 방향이 크게 바뀔 수 있어요.",
+   "risks": "금리 인상 우려, 데이터센터 규제, 엔비디아 경영 공백 같은 변수가 많아 하루에 10% 넘게 움직이기도 할 만큼 변동성이 매우 커요. 11월 17일 엔비디아 실적 발표도 큰 변수예요.",
    "sources": [
-    "https://finance.yahoo.com/markets/live/stock-market-today-thursday-october-29-dow-sp-500-nasdaq-alphabet-microsoft-earnings-130305714.html",
-    "https://www.cbsnews.com/news/nasdaq-futures-tumble-tech-earnings-ai/",
-    "https://www.cnbc.com/2026/11/01/stock-market-today-live-updates.html"
+    "https://www.cnbc.com/2026/11/06/ai-data-center-midterms-selloff.html",
+    "https://www.bloomberg.com/news/articles/2026-11-05/chips-selloff-worsens-as-fears-about-ai-trade-grip-stock-market",
+    "https://finance.yahoo.com/markets/article/amd-broadcom-stocks-jump-as-nvidia-ceo-jensen-huang-resigns-143725561.html",
+    "https://www.cnbc.com/2026/11/11/coreweave-crwv-outlook-earnings-ai.html"
    ]
   },
   {
-   "name": "AI 투자비와 '빚내서 투자'",
-   "oneLine": "빅테크가 AI 데이터센터에 쓰는 돈이 너무 커서, 회사채·주식까지 팔아 돈을 마련하는 게 걱정거리가 됐어요.",
+   "name": "헬스케어·방어주로 이동",
+   "oneLine": "경기와 상관없이 꾸준히 팔리는 의료·생필품·전기 같은 '방어주'로 돈이 옮겨가는 흐름이에요.",
    "why": [
-    "오라클은 AI 설비 투자를 위해 주식 100억·채권 100억 달러, 총 200억 달러 조달을 발표했고 주가가 약 8% 떨어졌어요.",
-    "마이크로소프트는 250억 달러 채권 발행을, 알파벳은 약 60억 유로 채권 발행을 추진한다는 보도가 나왔어요.",
-    "아마존은 연간 설비투자 2,200억 달러 계획을 유지했는데, 잉여현금흐름은 마이너스(-424억 달러)로 나왔어요."
+    "AI·기술주가 흔들리자 투자자들이 헬스케어·필수소비재·유틸리티로 이동한다는 보도가 많아요.",
+    "헬스케어 ETF(XLV)는 1개월 +8.0%, 3개월 +12.2%로 가장 강한 편이고, 필수소비재(+5.8%)·유틸리티(+5.0%)도 1개월 수익률이 좋아요.",
+    "민주당의 의회 선거 승리 뒤 건강보험 지원 확대 기대로 보험·병원주가 올랐어요."
    ],
    "companies": [
     {
-     "name": "오라클",
-     "ticker": "ORCL",
-     "what": "기업용 데이터베이스·클라우드 서비스"
+     "name": "유나이티드헬스",
+     "ticker": "UNH",
+     "what": "미국 최대 건강보험 회사"
     },
     {
-     "name": "아마존",
-     "ticker": "AMZN",
-     "what": "온라인 쇼핑과 클라우드(AWS) 운영"
+     "name": "몰리나 헬스케어",
+     "ticker": "MOH",
+     "what": "저소득층 공공 건강보험 전문 회사"
     },
     {
-     "name": "마이크로소프트",
-     "ticker": "MSFT",
-     "what": "윈도우·오피스·애저 클라우드 운영"
+     "name": "센텐",
+     "ticker": "CNC",
+     "what": "공공·오바마케어 건강보험 운영"
+    },
+    {
+     "name": "HCA 헬스케어",
+     "ticker": "HCA",
+     "what": "미국 대형 병원 체인"
     }
    ],
-   "risks": "투자한 만큼 AI로 돈을 벌지 못하면 빚 부담과 주가 하락이 함께 올 수 있어요. 반대로 AI 수요가 확인되면 걱정이 빠르게 줄 수도 있어 뉴스마다 주가가 크게 흔들려요.",
+   "risks": "모닝스타는 헬스케어를 비싼 편(고평가)인 섹터로 보고 있고, CNBC는 방어주 쏠림이 지나쳤을 수 있다는 분석도 전했어요. 기술주가 다시 반등하면 돈이 빠르게 빠져나갈 수 있어요.",
    "sources": [
-    "https://finance.yahoo.com/markets/live/stock-market-today-monday-november-2-dow-sp-500-nasdaq-091835095.html",
-    "https://www.cnbc.com/2026/11/01/stock-market-today-live-updates.html",
-    "https://www.marketscreener.com/news/us-stocks-slump-as-alphabet-revenue-miss-reignites-ai-capex-jitters-ce785fdadf80fe26"
+    "https://www.cnbc.com/2026/11/11/tech-selloff-defensive-pivot.html",
+    "https://www.cnbc.com/2026/11/03/midterm-election-stock-market.html",
+    "https://www.morningstar.com/markets/november-stock-market-outlook-how-position-your-portfolio-remainder-2026"
    ]
   },
   {
-   "name": "방어주·전통 산업으로 이동",
-   "oneLine": "기술주에서 빠진 돈이 헬스케어·생활필수품·전통 제조업처럼 경기를 덜 타는 주식으로 옮겨가는 현상(로테이션)이에요.",
+   "name": "이란 협상과 유가 출렁임",
+   "oneLine": "미국-이란 전쟁이 끝날지에 따라 기름값이 크게 오르내리고, 석유 회사 주가도 같이 흔들리는 흐름이에요.",
    "why": [
-    "최근 1개월 필수소비재(XLP) +12.79%, 헬스케어(XLV) +11.08%, 소재(XLB) +9.84%로 기술주와 정반대 흐름이에요.",
-    "CNBC는 지난주 기술주가 빠지는 동안 대부분 업종이 오르며 투자자들이 헬스케어·필수소비재로 피했다고 전했어요.",
-    "11월 2일에는 셔윈윌리엄스(약 +6%)·홈디포(+3.6%)·하니웰·3M이 올라 다우를 끌어올렸어요."
-   ],
-   "companies": [
-    {
-     "name": "아이덱스 래버러토리스",
-     "ticker": "IDXX",
-     "what": "반려동물 진단 검사 장비·서비스"
-    },
-    {
-     "name": "셔윈윌리엄스",
-     "ticker": "SHW",
-     "what": "페인트·코팅 제품 제조·판매"
-    },
-    {
-     "name": "홈디포",
-     "ticker": "HD",
-     "what": "집수리·건축 자재 대형 매장"
-    }
-   ],
-   "risks": "짧은 기간에 너무 많이 오른 업종은 기술주가 다시 반등하면 돈이 빠르게 빠져나갈 수 있어요. 헬스케어는 선거 결과에 따른 정책 변화에도 민감해요.",
-   "sources": [
-    "https://www.cnbc.com/2026/10/30/stock-market-next-week-outlook-for-nov-2-6-2026.html",
-    "https://www.cnbc.com/2026/11/01/stock-market-today-live-updates.html",
-    "https://www.axios.com/2026/10/19/health-care-stocks-midterms"
-   ]
-  },
-  {
-   "name": "이란 전쟁과 유가 롤러코스터",
-   "oneLine": "미국·이란 전쟁 소식에 따라 기름값이 크게 오르내리고, 에너지 기업 주가도 함께 흔들리는 이야기예요.",
-   "why": [
-    "에너지 ETF(XLE)는 3개월 +14.92%로 강했지만, 최근 1주는 -3.43%로 꺾였어요.",
-    "10월 말 WTI 유가가 7일 연속 올라 배럴당 101달러를 넘었어요.",
-    "11월 2일 미국·이란 대화 기대에 브렌트유는 7.63% 떨어진 104.77달러, WTI는 96.46달러로 급락했어요."
+    "평화협상 기대에 11월 2일 브렌트유가 하루 7.6% 급락했어요.",
+    "그러나 11월 12일 트럼프 대통령이 '이란과 합의가 필요 없다'고 하자 브렌트유가 3.3% 올라 약 96달러가 됐어요.",
+    "에너지 ETF(XLE)는 1년 +42.2%로 크게 올랐지만 1개월은 -4.9%로 주춤해요."
    ],
    "companies": [
     {
      "name": "엑슨모빌",
      "ticker": "XOM",
-     "what": "세계 최대급 석유·가스 생산 기업"
+     "what": "미국 최대 석유·가스 회사"
     },
     {
      "name": "셰브론",
      "ticker": "CVX",
-     "what": "석유·가스 탐사·생산·정유"
+     "what": "미국 2위 석유·가스 회사"
     }
    ],
-   "risks": "전쟁·협상 뉴스 한 줄에 유가가 하루 7%씩 움직일 만큼 예측이 어려워요. 평화 협상이 진전되면 유가와 에너지주가 함께 크게 떨어질 수 있어요.",
+   "risks": "뉴스 한 줄에 유가가 하루 몇 %씩 움직여 석유주 변동성이 커요. 전쟁이 완전히 끝나면 유가가 크게 떨어질 수 있다는 전망도 있어요.",
    "sources": [
-    "https://www.cnbc.com/2026/11/01/stock-market-today-live-updates.html",
-    "https://www.cnbc.com/2026/10/30/stock-market-next-week-outlook-for-nov-2-6-2026.html",
-    "https://www.cnbc.com/2026/08/02/oil-prices-iran-war-energy-market.html"
+    "https://www.cnbc.com/2026/11/02/oil-prices-fall-as-iran-us-pursue-diplomacy.html",
+    "https://bloomberg.com/news/articles/2026-11-12/oil-jumps-after-trump-says-us-doesn-t-need-deal-with-iran",
+    "https://finance.yahoo.com/energy/articles/trump-says-iran-wants-settlement-203627510.html"
    ]
   }
  ]
