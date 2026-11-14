@@ -1643,5 +1643,30 @@
    "https://finance.yahoo.com/markets/article/amd-broadcom-stocks-jump-as-nvidia-ceo-jensen-huang-resigns-143725561.html"
   ],
   "newsAt": "2026-11-13T13:20:09Z"
+ },
+ "2026-11-13": {
+  "date": "2026-11-13",
+  "verdict": "down",
+  "indices": {
+   "spx": {
+    "close": 7561.67,
+    "prev": 7592.4,
+    "chg": -0.4,
+    "dd": -3.29
+   },
+   "ndx": {
+    "close": 25136.27,
+    "prev": 25366.09,
+    "chg": -0.91,
+    "dd": -8.93
+   },
+   "dji": {
+    "close": 52347.55,
+    "prev": 52297.09,
+    "chg": 0.1,
+    "dd": -3.68
+   }
+  },
+  "updatedAt": "2026-11-14T01:58:36Z"
  }
 }
