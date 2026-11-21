@@ -817,7 +817,7 @@
    "name": "시스코",
    "what": "네트워크 장비",
    "time": "unknown",
-   "capB": 383,
+   "capB": 373,
    "epsForecast": 1.15,
    "eps": 1.21,
    "surprise": 5.22
@@ -827,7 +827,7 @@
    "name": "어플라이드 머티어리얼즈",
    "what": "반도체 장비",
    "time": "unknown",
-   "capB": 280,
+   "capB": 269,
    "epsForecast": 4.06,
    "eps": 4.16,
    "surprise": 2.46
@@ -839,7 +839,7 @@
    "name": "미쓰비시UFJ",
    "what": "일본 은행",
    "time": "unknown",
-   "capB": 226,
+   "capB": 222,
    "epsForecast": 0.45,
    "eps": 0.46,
    "surprise": 2.22
@@ -851,7 +851,7 @@
    "name": "엔비디아",
    "what": "AI 반도체",
    "time": "unknown",
-   "capB": 3638,
+   "capB": 3518,
    "epsForecast": 2.47,
    "eps": 2.68,
    "surprise": 8.5
@@ -861,7 +861,7 @@
    "name": "디즈니",
    "what": "영화·테마파크",
    "time": "unknown",
-   "capB": 209,
+   "capB": 205,
    "epsForecast": 1.67,
    "eps": 1.77,
    "surprise": 5.99
@@ -871,19 +871,9 @@
    "name": "홈디포",
    "what": "집수리 용품점",
    "time": "unknown",
-   "capB": 337,
+   "capB": 336,
    "epsForecast": 3.86,
    "eps": 3.86,
-   "surprise": null
-  },
-  {
-   "symbol": "BHP",
-   "name": "BHP",
-   "what": "광산",
-   "time": "unknown",
-   "capB": 179,
-   "epsForecast": null,
-   "eps": null,
    "surprise": null
   }
  ],
@@ -893,7 +883,7 @@
    "name": "팔로알토 네트웍스",
    "what": "사이버보안",
    "time": "unknown",
-   "capB": 278,
+   "capB": 296,
    "epsForecast": 0.52,
    "eps": 0.46,
    "surprise": -11.54
@@ -903,7 +893,7 @@
    "name": "TJX",
    "what": "할인 의류점",
    "time": "unknown",
-   "capB": 154,
+   "capB": 153,
    "epsForecast": 1.33,
    "eps": 1.34,
    "surprise": 0.75
@@ -914,21 +904,21 @@
    "symbol": "WMT",
    "name": "월마트",
    "what": "대형마트",
-   "time": "pre",
-   "capB": 1010,
+   "time": "unknown",
+   "capB": 1000,
    "epsForecast": 0.64,
-   "eps": null,
-   "surprise": null
+   "eps": 0.65,
+   "surprise": 1.56
   },
   {
    "symbol": "BABA",
    "name": "알리바바",
    "what": "중국 전자상거래",
-   "time": "pre",
-   "capB": 204,
+   "time": "unknown",
+   "capB": 202,
    "epsForecast": 1.56,
-   "eps": null,
-   "surprise": null
+   "eps": 1.04,
+   "surprise": -33.33
   }
  ],
  "2026-11-24": [
@@ -938,7 +928,7 @@
    "what": "PC·서버",
    "time": "after",
    "capB": 199,
-   "epsForecast": 6.48,
+   "epsForecast": 6.55,
    "eps": null,
    "surprise": null
   },
@@ -947,8 +937,18 @@
    "name": "아날로그 디바이스",
    "what": "아날로그 반도체",
    "time": "pre",
-   "capB": 185,
+   "capB": 183,
    "epsForecast": 3.89,
+   "eps": null,
+   "surprise": null
+  },
+  {
+   "symbol": "BHP",
+   "name": "BHP",
+   "what": "광산",
+   "time": "unknown",
+   "capB": 176,
+   "epsForecast": null,
    "eps": null,
    "surprise": null
   }
@@ -959,7 +959,7 @@
    "name": "디어",
    "what": "농기계",
    "time": "pre",
-   "capB": 174,
+   "capB": 168,
    "epsForecast": 4.07,
    "eps": null,
    "surprise": null
@@ -971,7 +971,7 @@
    "name": "크라우드스트라이크",
    "what": "사이버보안",
    "time": "after",
-   "capB": 243,
+   "capB": 249,
    "epsForecast": 0.0,
    "eps": null,
    "surprise": null
@@ -983,7 +983,7 @@
    "name": "세일즈포스",
    "what": "기업용 소프트웨어",
    "time": "after",
-   "capB": 157,
+   "capB": 151,
    "epsForecast": 2.41,
    "eps": null,
    "surprise": null
@@ -995,7 +995,7 @@
    "name": "캐나다왕립은행",
    "what": "은행",
    "time": "pre",
-   "capB": 263,
+   "capB": 260,
    "epsForecast": 2.93,
    "eps": null,
    "surprise": null
@@ -1005,7 +1005,7 @@
    "name": "TD은행",
    "what": "캐나다 은행",
    "time": "pre",
-   "capB": 189,
+   "capB": 188,
    "epsForecast": 1.77,
    "eps": null,
    "surprise": null
@@ -1017,18 +1017,8 @@
    "name": "브로드컴",
    "what": "통신·AI 반도체",
    "time": "after",
-   "capB": 1631,
+   "capB": 1655,
    "epsForecast": 3.45,
-   "eps": null,
-   "surprise": null
-  },
-  {
-   "symbol": "ORCL",
-   "name": "오라클",
-   "what": "데이터베이스·클라우드",
-   "time": "unknown",
-   "capB": 348,
-   "epsForecast": 1.56,
    "eps": null,
    "surprise": null
   },
@@ -1037,7 +1027,7 @@
    "name": "어도비",
    "what": "포토샵·디자인 SW",
    "time": "after",
-   "capB": 92,
+   "capB": 86,
    "epsForecast": 5.11,
    "eps": null,
    "surprise": null
@@ -1061,7 +1051,7 @@
    "name": "마이크론",
    "what": "메모리 반도체",
    "time": "unknown",
-   "capB": 798,
+   "capB": 781,
    "epsForecast": 37.95,
    "eps": null,
    "surprise": null
@@ -1073,18 +1063,8 @@
    "name": "나이키",
    "what": "스포츠용품",
    "time": "unknown",
-   "capB": 54,
+   "capB": 51,
    "epsForecast": 0.34,
-   "eps": null,
-   "surprise": null
-  },
-  {
-   "symbol": "ACN",
-   "name": "Accenture",
-   "what": null,
-   "time": "pre",
-   "capB": 152,
-   "epsForecast": 3.9,
    "eps": null,
    "surprise": null
   }
