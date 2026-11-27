@@ -955,6 +955,18 @@
    "surprise": 4.37
   }
  ],
+ "2026-11-25": [
+  {
+   "symbol": "DE",
+   "name": "디어",
+   "what": "농기계",
+   "time": "unknown",
+   "capB": 165,
+   "epsForecast": 4.07,
+   "eps": 3.89,
+   "surprise": -4.42
+  }
+ ],
  "2026-12-01": [
   {
    "symbol": "BHP",
@@ -986,7 +998,7 @@
    "what": "은행",
    "time": "pre",
    "capB": 262,
-   "epsForecast": 2.93,
+   "epsForecast": 2.94,
    "eps": null,
    "surprise": null
   },
@@ -996,7 +1008,7 @@
    "what": "캐나다 은행",
    "time": "pre",
    "capB": 189,
-   "epsForecast": 1.77,
+   "epsForecast": 1.76,
    "eps": null,
    "surprise": null
   }
